@@ -11,9 +11,7 @@ import com.cafe24.config.app.MyBatisConfig;
 @Configuration
 @EnableAspectJAutoProxy
 @Import({DBConfig.class, MyBatisConfig.class})
-@ComponentScan({"com.cafe24.mysite.repository", "com.cafe24.mysite.service", "com.cafe24.mysite.aspect", "com.cafe24.fileupload.service"})
+@ComponentScan({"com.cafe24.shop.repository", "com.cafe24.shop.service"})
 public class AppConfig {
-
-	
 	
 }

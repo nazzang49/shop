@@ -13,9 +13,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
-//트랜잭션의 관리를 받도록 선언하는 애노테이션
 @EnableTransactionManagement
-//jdbc 설정과 관련된 프로퍼티 파일 경로
 @PropertySource("classpath:com/cafe24/config/app/properties/jdbc.properties")
 public class DBConfig {
 	
@@ -25,7 +23,7 @@ public class DBConfig {
 	@Bean
 	public DataSource basicDataSource() {
 		BasicDataSource basicDataSource = new BasicDataSource();
-		//프로퍼티 파일을 생성하여 대체(resource 패키지 내)
+
 		basicDataSource.setDriverClassName(env.getProperty("jdbc.driverClassName"));
 		basicDataSource.setUrl(env.getProperty("jdbc.url"));
 		basicDataSource.setUsername(env.getProperty("jdbc.username"));
@@ -40,5 +38,4 @@ public class DBConfig {
 	public PlatformTransactionManager transactionManager(DataSource dataSource) {
 		return new DataSourceTransactionManager(dataSource);
 	}
-	
 }

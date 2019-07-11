@@ -22,49 +22,45 @@ import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 @Configuration
 public class MVCConfig extends WebMvcConfigurerAdapter {
    
-   // View Resolver
-   @Bean
-   public ViewResolver viewResolver() {
-      InternalResourceViewResolver resolver = new InternalResourceViewResolver();
-      resolver.setPrefix("/WEB-INF/views/");
-      resolver.setSuffix(".jsp");
-      resolver.setExposeContextBeansAsAttributes(true);
-      return resolver;
-   }
+	@Bean
+	public ViewResolver viewResolver() {
+		InternalResourceViewResolver resolver = new InternalResourceViewResolver();
+		resolver.setPrefix("/WEB-INF/views/");
+		resolver.setSuffix(".jsp");
+		resolver.setExposeContextBeansAsAttributes(true);
+		return resolver;
+	}
 
-   // Default Servlet Handler
-   @Override
-   public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
-      configurer.enable();
-   }
+	@Override
+	public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
+		configurer.enable();
+	}
 
-   // Message Converter
-   @Bean
-   public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter () {
-      Jackson2ObjectMapperBuilder builder = 
-            new Jackson2ObjectMapperBuilder()
+	@Bean
+	public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter () {
+		Jackson2ObjectMapperBuilder builder = 
+				new Jackson2ObjectMapperBuilder()
                .indentOutput( true )
                .dateFormat( new SimpleDateFormat("yyyy-MM-dd") )
                .modulesToInstall( new ParameterNamesModule() );
-      
-      MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter( builder.build() );
-      
-      converter.setSupportedMediaTypes(Arrays.asList( new MediaType( "application", "json", Charset.forName("UTF-8") ) ));
-      return converter;
-   }
+		
+		MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter( builder.build() );
+		converter.setSupportedMediaTypes(Arrays.asList( new MediaType( "application", "json", Charset.forName("UTF-8") ) ));
+		
+		return converter;
+	}
    
-   @Bean
-   public StringHttpMessageConverter stringHttpMessageConverter () {
-      StringHttpMessageConverter converter = new StringHttpMessageConverter();
-      converter.setSupportedMediaTypes(Arrays.asList( new MediaType( "text", "html", Charset.forName("UTF-8") ) ));
+	@Bean
+	public StringHttpMessageConverter stringHttpMessageConverter () {
+		StringHttpMessageConverter converter = new StringHttpMessageConverter();
+		converter.setSupportedMediaTypes(Arrays.asList( new MediaType( "text", "html", Charset.forName("UTF-8") ) ));
       
-      return converter;
-   }
+		return converter;
+	}
    
-   @Override
-   public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-      converters.add(mappingJackson2HttpMessageConverter());
-      converters.add(stringHttpMessageConverter());
-   }
-   
+	@Override
+	public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+		converters.add(mappingJackson2HttpMessageConverter());
+		converters.add(stringHttpMessageConverter());
+	}
 }

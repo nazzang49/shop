@@ -11,13 +11,13 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import com.cafe24.shop.service.UserService;
-import com.cafe24.shop.vo.UserVO;
+import com.cafe24.shop.service.MemberService;
+import com.cafe24.shop.vo.MemberVO;
 
 public class AuthLoginInterceptor extends HandlerInterceptorAdapter{
 
 	@Autowired
-	private UserService userService;
+	private MemberService userService;
 	
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
@@ -26,15 +26,11 @@ public class AuthLoginInterceptor extends HandlerInterceptorAdapter{
 		String email = request.getParameter("email");
 		String pw = request.getParameter("pw");
 		
-		//컨테이너 생성
-		//ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext(request.getServletContext());
-		//userService = ac.getBean(UserService.class);
-		
-		UserVO user = new UserVO();
+		MemberVO user = new MemberVO();
 		user.setEmail(email);
-		user.setPw(pw);
+		user.setPassword(pw);
 		
-		UserVO authUser = userService.getUser(user);
+		MemberVO authUser = userService.getUser(user);
 		if(authUser==null) {
 			response.sendRedirect(request.getContextPath()+"/user/login");
 			return false;
@@ -46,5 +42,4 @@ public class AuthLoginInterceptor extends HandlerInterceptorAdapter{
 		
 		return false;
 	}
-	
 }

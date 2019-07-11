@@ -19,5 +19,4 @@ public class AuthLogoutInterceptor extends HandlerInterceptorAdapter {
 		
 		return false;
 	}
-	
 }

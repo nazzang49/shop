@@ -21,7 +21,6 @@ public class SecurityConfig extends WebMvcConfigurerAdapter{
 		argumentResolvers.add(authUserHandlerArgumentResolver());
 	}
 
-	//Argument Resolver
 	@Bean
 	public AuthUserHandlerArgumentResolver authUserHandlerArgumentResolver() {
 		return new AuthUserHandlerArgumentResolver();
@@ -42,7 +41,6 @@ public class SecurityConfig extends WebMvcConfigurerAdapter{
 		return new AuthLogoutInterceptor();
 	}
 	
-	//Interceptor
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(authLoginInterceptor()).addPathPatterns("/user/auth");
@@ -51,5 +49,4 @@ public class SecurityConfig extends WebMvcConfigurerAdapter{
 															.excludePathPatterns("/user/logout")
 															.excludePathPatterns("/assets/**");
 	}
-	
 }

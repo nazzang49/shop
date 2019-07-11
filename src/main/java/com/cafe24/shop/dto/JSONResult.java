@@ -1,10 +1,10 @@
 package com.cafe24.shop.dto;
 
-//api 통신 시 통신 규약
 public class JSONResult {
-	private String result;  //success or fail
-	private String message; //if fail --> set
-	private Object data;    //if success --> set
+	
+	private String result;  //성공 or 실패
+	private String message; //실패 메시지
+	private Object data;    //성공 데이터
 
 	public static JSONResult success(Object data) {
 		return new JSONResult("success", null, data);

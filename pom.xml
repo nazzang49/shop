@@ -166,15 +166,47 @@
   
   <!-- test -->
   <dependency>
-    <groupId>org.springframework</groupId>
-	<artifactId>spring-test</artifactId>
-	<version>${org.springframework-version}</version>
+   <groupId>org.springframework</groupId>
+   <artifactId>spring-test</artifactId>
+   <version>${org.springframework-version}</version>
   </dependency>
   
   <dependency>
-    <groupId>junit</groupId>
-	<artifactId>junit</artifactId>
-	<version>4.12</version>
+   <groupId>junit</groupId>
+   <artifactId>junit</artifactId>
+   <version>4.12</version>
+  </dependency>
+  
+  <!-- mockito-all -->
+  <dependency>
+   <groupId>org.mockito</groupId>
+   <artifactId>mockito-all</artifactId>
+   <version>1.10.19</version>
+   <scope>test</scope>
+  </dependency>
+  
+  <!-- hamcrest-all -->
+  <dependency>
+   <groupId>org.hamcrest</groupId>
+   <artifactId>hamcrest-all</artifactId>
+   <version>1.3</version>
+   <scope>test</scope>
+  </dependency>
+  
+  <!-- json-path -->
+  <dependency>
+   <groupId>com.jayway.jsonpath</groupId>
+   <artifactId>json-path</artifactId>
+   <version>2.4.0</version>
+   <scope>test</scope>
+  </dependency>
+  
+  <!--gson -->
+  <dependency>
+    <groupId>com.google.code.gson</groupId>
+    <artifactId>gson</artifactId>
+    <version>2.8.5</version>
+    <scope>test</scope>
   </dependency>
   
   </dependencies>

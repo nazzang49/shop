@@ -14,7 +14,5 @@ public class MessageConfig {
 		messageSource.setBasename("com/cafe24/config/web/messages/messages_ko.properties");
 		messageSource.setDefaultEncoding("utf-8");
 		return messageSource;
-		
 	}
-	
 }

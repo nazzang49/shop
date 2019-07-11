@@ -1,6 +1,8 @@
 package com.cafe24.shop.config;
 
 import org.springframework.context.annotation.ComponentScan;
+
+
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
@@ -14,8 +16,8 @@ import com.cafe24.config.web.SwaggerConfig;
 @Configuration
 @EnableWebMvc
 @EnableAspectJAutoProxy
-@ComponentScan({"com.cafe24.mysite.controller", "com.cafe24.mysite.exception", "com.cafe24.mysite.controller.api", "com.cafe24.fileupload.controller"})
-@Import({MVCConfig.class, SecurityConfig.class, MessageConfig.class, SwaggerConfig.class})
+@ComponentScan({"com.cafe24.shop.controller", "com.cafe24.shop.exception", "com.cafe24.shop.controller.api"})
+@Import({MVCConfig.class, SecurityConfig.class, MessageConfig.class, SwaggerConfig.class, SwaggerConfig.class})
 public class WebConfig {
 	
 }

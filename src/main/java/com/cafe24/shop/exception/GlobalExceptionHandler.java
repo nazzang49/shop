@@ -23,15 +23,12 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(Exception.class)
 	public void handleException(HttpServletRequest request, HttpServletResponse response, Exception e) throws Exception {
 		
-		//1. 로깅
 		e.printStackTrace();
 		StringWriter errors = new StringWriter();
 		e.printStackTrace(new PrintWriter(errors));
-		//LOGGER.error(errors.toString());
 		
 		String accept = request.getHeader("accept");
 		if(accept.matches(".*application/json.*")) {
-			//JSON 응답
 			response.setStatus(HttpServletResponse.SC_OK);
 			
 			JSONResult jsonResult = JSONResult.fail(errors.toString());
@@ -43,7 +40,6 @@ public class GlobalExceptionHandler {
 			os.close();
 			
 		}else {
-			//2. 안내페이지 가기 + 정상종료(response)
 			request.setAttribute("uri", request.getRequestURI());
 			request.setAttribute("exception", errors.toString());
 			request.

@@ -13,10 +13,10 @@ public class MyBatisConfig {
 
 	@Bean
 	public SqlSessionFactory sqlSessionFactoryBean(DataSource dataSource, ApplicationContext applicationContext) throws Exception {
-		SqlSessionFactoryBean sqlSessionFactoryBean 
-			= new SqlSessionFactoryBean();
+		SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
 		sqlSessionFactoryBean.setDataSource(dataSource);
-		sqlSessionFactoryBean.setConfigLocation(applicationContext.getResource("classpath:com/cafe24/config/app/mybatis/configuration.xml"));
+		sqlSessionFactoryBean.setConfigLocation(applicationContext
+												.getResource("classpath:com/cafe24/config/app/mybatis/configuration.xml"));
 
 		return sqlSessionFactoryBean.getObject();
 	}
@@ -25,5 +25,4 @@ public class MyBatisConfig {
 	public SqlSessionTemplate sqlSession(SqlSessionFactory sqlSessionFactory) {
 		return new SqlSessionTemplate(sqlSessionFactory);
 	}
-	
 }
