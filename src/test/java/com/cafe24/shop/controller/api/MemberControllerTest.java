@@ -53,30 +53,7 @@ public class MemberControllerTest {
 		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 	}
 	
-	//회원가입
-	@Test
-	public void testMemberJoin() throws Exception {
-		MemberVO mvo = new MemberVO();
-		
-		mvo.setId("test");
-		mvo.setName("test");
-		mvo.setPassword("pw");
-		mvo.setAuth("user");
-		mvo.setPhone("010-1111-1111");
-		mvo.setEmail("test@gmail.com");
-		mvo.setAddress("서울");
-		
-		//test >> api
-		ResultActions resultActions = 
-				mockMvc.perform(post("/api/member/join").contentType(MediaType.APPLICATION_JSON).content(new Gson().toJson(mvo)));
-		
-		resultActions
-		.andExpect(status().isOk()).andDo(print())
-		.andExpect(jsonPath("$.result", is("success")))
-		.andExpect(jsonPath("$.data", is(true)));
-	}
-	
-	//회원가입 - 아이디 중복 체크 Ajax
+	//조인 >> 아이디 중복 체크
 	@Test
 	public void testMemberCheckId() throws Exception {
 		Map<String, String> map = new HashMap<>();
@@ -90,7 +67,30 @@ public class MemberControllerTest {
 		resultActions
 		.andExpect(status().isOk()).andDo(print())
 		.andExpect(jsonPath("$.result", is("success")))
-		.andExpect(jsonPath("$.data", is(true)));
+		.andExpect(jsonPath("$.data.flag", is(true)));
+	}
+	
+	//조인
+	@Test
+	public void testMemberJoin() throws Exception {
+		MemberVO mvo = new MemberVO();
+		
+		mvo.setId("test");
+		mvo.setName("test");
+		mvo.setPassword("pw");
+		mvo.setAuth("USER");
+		mvo.setPhone("010-1111-1111");
+		mvo.setEmail("test@gmail.com");
+		mvo.setAddress("서울");
+		
+		//test >> api
+		ResultActions resultActions = 
+				mockMvc.perform(post("/api/member/join").contentType(MediaType.APPLICATION_JSON).content(new Gson().toJson(mvo)));
+		
+		resultActions
+		.andExpect(status().isOk()).andDo(print())
+		.andExpect(jsonPath("$.result", is("success")))
+		.andExpect(jsonPath("$.data.flag", is(true)));
 	}
 	
 	//로그인
@@ -108,57 +108,52 @@ public class MemberControllerTest {
 		resultActions
 		.andExpect(status().isOk()).andDo(print())
 		.andExpect(jsonPath("$.result", is("success")))
-		.andExpect(jsonPath("$.data", is(true)));
+		.andExpect(jsonPath("$.data.flag", is(true)));
 	}
 	
-	//회원 정보 조회
+	//회원조회
 	@Test
-	public void testMemberInfo() throws Exception {
-		Map<String, String> map = new HashMap<>();
-		
-		map.put("id","test");
-		
+	public void testMemberRead() throws Exception {
 		//test >> api
 		ResultActions resultActions = 
-				mockMvc.perform(get("/api/member/info/{id}","test").contentType(MediaType.APPLICATION_JSON).content(new Gson().toJson(map)));
+				mockMvc.perform(get("/api/member/{id}","test").contentType(MediaType.APPLICATION_JSON));
 		
 		resultActions
 		.andExpect(status().isOk()).andDo(print())
 		.andExpect(jsonPath("$.result", is("success")))
-		.andExpect(jsonPath("$.data.id", is("test")))
-		.andExpect(jsonPath("$.data.password", is("pw")))
-		.andExpect(jsonPath("$.data.name", is("test")))
-		.andExpect(jsonPath("$.data.address", is("서울")))
-		.andExpect(jsonPath("$.data.phone", is("010-1111-1111")))
-		.andExpect(jsonPath("$.data.email", is("test@naver.com")))
-		.andExpect(jsonPath("$.data.auth", is("USER")))
-		.andExpect(jsonPath("$.data.regDate", is("2018-10-01")));
+		.andExpect(jsonPath("$.data.mvo.id", is("test")))
+		.andExpect(jsonPath("$.data.mvo.password", is("pw")))
+		.andExpect(jsonPath("$.data.mvo.name", is("test")))
+		.andExpect(jsonPath("$.data.mvo.address", is("서울")))
+		.andExpect(jsonPath("$.data.mvo.phone", is("010-1111-1111")))
+		.andExpect(jsonPath("$.data.mvo.email", is("test@naver.com")))
+		.andExpect(jsonPath("$.data.mvo.auth", is("USER")))
+		.andExpect(jsonPath("$.data.mvo.regDate", is("2018-10-01")));
 	}
 	
-	//회원 정보 수정
+	//회원수정
 	@Test
-	public void testMemberModify() throws Exception {
+	public void testMemberUpdate() throws Exception {
 		MemberVO mvo = new MemberVO();
 		
-		mvo.setId("test");
 		mvo.setName("test");
 		mvo.setPassword("pw");
-		mvo.setAuth("user");
+		mvo.setAuth("USER");
 		mvo.setPhone("010-1111-1111");
 		mvo.setEmail("test@gmail.com");
 		mvo.setAddress("서울");
 		
 		//test >> api
 		ResultActions resultActions = 
-				mockMvc.perform(put("/api/member/modify").contentType(MediaType.APPLICATION_JSON).content(new Gson().toJson(mvo)));
+				mockMvc.perform(put("/api/member/update/{id}","test").contentType(MediaType.APPLICATION_JSON).content(new Gson().toJson(mvo)));
 		
 		resultActions
 		.andExpect(status().isOk()).andDo(print())
 		.andExpect(jsonPath("$.result", is("success")))
-		.andExpect(jsonPath("$.data", is(true)));
+		.andExpect(jsonPath("$.data.flag", is(true)));
 	}
-	
-	//회원 탈퇴 = 삭제
+		
+	//회원탈퇴
 	@Test
 	public void testMemberDelete() throws Exception {
 		Map<String, String> map = new HashMap<>();
@@ -167,12 +162,12 @@ public class MemberControllerTest {
 		
 		//test >> api
 		ResultActions resultActions = 
-				mockMvc.perform(delete("/api/member/delete").contentType(MediaType.APPLICATION_JSON).content(new Gson().toJson(map)));
+				mockMvc.perform(delete("/api/member/delete/{id}","test").contentType(MediaType.APPLICATION_JSON).content(new Gson().toJson(map)));
 		
 		resultActions
 		.andExpect(status().isOk()).andDo(print())
 		.andExpect(jsonPath("$.result", is("success")))
-		.andExpect(jsonPath("$.data", is(true)));
+		.andExpect(jsonPath("$.data.flag", is(true)));
 	}
 	
 	@AfterClass

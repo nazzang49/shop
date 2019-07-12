@@ -1,5 +1,6 @@
 package com.cafe24.shop.controller.api;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,58 +21,92 @@ public class MemberController {
 	@Autowired
 	private MemberService memberService;
 	
-	@ApiOperation(value="회원가입")
+	//조인 >> 회원 user / 관리자 admin
+	@ApiOperation(value="조인")
 	@RequestMapping(value="/join", method=RequestMethod.POST)
 	public JSONResult join(@RequestBody MemberVO mvo) {
-		boolean flag = memberService.회원가입(mvo);
 		
-		JSONResult result = JSONResult.success(flag);
+		boolean flag = memberService.조인(mvo);
+		
+		Map<String, Object> data = new HashMap<>();
+		data.put("flag", flag);
+		JSONResult result = JSONResult.success(data);
 		return result;
 	}
 	
-	@ApiOperation(value="아이디중복체크")
+	//아이디 중복 체크
+	@ApiOperation(value="아이디 중복 체크")
 	@RequestMapping(value="/checkid", method=RequestMethod.POST)
 	public JSONResult checkid(@RequestBody Map<String, String> map) {
+		
 		boolean flag = memberService.아이디중복체크((String)map.get("id"));
 		
-		JSONResult result = JSONResult.success(flag);
+		
+		//리턴 데이터
+		Map<String, Object> data = new HashMap<>();
+		data.put("flag", flag);
+		JSONResult result = JSONResult.success(data);
 		return result;
 	}
 	
+	//로그인
 	@ApiOperation(value="로그인")
 	@RequestMapping(value="/login", method=RequestMethod.POST)
 	public JSONResult login(@RequestBody Map<String, String> map) {
+		
 		boolean flag = memberService.로그인((String)map.get("id"),(String)map.get("password"));
 		
-		JSONResult result = JSONResult.success(flag);
+		//리턴 데이터
+		Map<String, Object> data = new HashMap<>();
+		data.put("flag", flag);
+		JSONResult result = JSONResult.success(data);
 		return result;
 	}
 	
-	//회원정보조회
-	@ApiOperation(value="회원정보조회")
-	@RequestMapping(value="/info/{id}", method=RequestMethod.GET)
-	public JSONResult info(@PathVariable(value="id") String id) {
-		MemberVO mvo = memberService.회원정보조회(id);
+	//회원조회
+	@ApiOperation(value="회원조회")
+	@RequestMapping(value="/{id}", method=RequestMethod.GET)
+	public JSONResult get(@PathVariable(value="id") String id) {
 		
-		JSONResult result = JSONResult.success(mvo);
+		//본인 인증
+		
+		MemberVO mvo = memberService.회원조회(id);
+		
+		//리턴 데이터
+		Map<String, Object> data = new HashMap<>();
+		data.put("mvo", mvo);
+		JSONResult result = JSONResult.success(data);
 		return result;
 	}
 	
-	@ApiOperation(value="회원정보수정")
-	@RequestMapping(value="/modify", method=RequestMethod.PUT)
-	public JSONResult modify(@RequestBody MemberVO mvo) {
-		boolean flag = memberService.회원정보수정(mvo);
+	//회원수정
+	@ApiOperation(value="회원수정")
+	@RequestMapping(value="/update/{id}", method=RequestMethod.PUT)
+	public JSONResult update(@RequestBody MemberVO mvo,
+							 @PathVariable(value="id") String id) {
 		
-		JSONResult result = JSONResult.success(flag);
+		//본인 인증
+		
+		boolean flag = memberService.회원수정(id, mvo);
+		
+		Map<String, Object> data = new HashMap<>();
+		data.put("flag", flag);
+		JSONResult result = JSONResult.success(data);
 		return result;
 	}
 	
 	@ApiOperation(value="회원탈퇴")
-	@RequestMapping(value="/delete", method=RequestMethod.DELETE)
-	public JSONResult delete(@RequestBody Map<String, String> map) {
+	@RequestMapping(value="/delete/{id}", method=RequestMethod.DELETE)
+	public JSONResult delete(@RequestBody Map<String, String> map,
+							 @PathVariable(value="id") String id) {
+		
+		//본인 인증
+		
 		boolean flag = memberService.회원탈퇴((String)map.get("password"));
 		
-		JSONResult result = JSONResult.success(flag);
+		Map<String, Object> data = new HashMap<>();
+		data.put("flag", flag);
+		JSONResult result = JSONResult.success(data);
 		return result;
 	}
 }

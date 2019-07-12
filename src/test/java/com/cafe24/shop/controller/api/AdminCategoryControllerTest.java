@@ -2,8 +2,10 @@ package com.cafe24.shop.controller.api;
 
 import static org.hamcrest.Matchers.*;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -25,14 +27,13 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.cafe24.shop.config.AppConfig;
 import com.cafe24.shop.config.TestWebConfig;
-import com.cafe24.shop.vo.MemberVO;
 import com.google.gson.Gson;
 
-//상품 컨트롤러 테스트 클래스
+//(관리자) 카테고리 관리 컨트롤러 테스트
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes= {AppConfig.class, TestWebConfig.class})
 @WebAppConfiguration
-public class ProductControllerTest {
+public class AdminCategoryControllerTest {
 
 	private MockMvc mockMvc;
 	
@@ -49,49 +50,66 @@ public class ProductControllerTest {
 		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 	}
 	
-	//(고객)상품전체목록 조회 >> Map 타입 리턴 >> 추후 카테고리, 검색 활용한 조회 내용 추가
+	//카테고리 목록
 	@Test
-	public void testProductList() throws Exception {
+	public void testACategoryListRead() throws Exception {
 		//test >> api
 		ResultActions resultActions = 
-				mockMvc.perform(get("/api/product/list").contentType(MediaType.APPLICATION_JSON));
-		
-		//일부 데이터만 확인
+				mockMvc.perform(get("/api/admincategory/list").contentType(MediaType.APPLICATION_JSON));
+
 		resultActions
-		//상품
 		.andExpect(status().isOk()).andDo(print())
 		.andExpect(jsonPath("$.result", is("success")))
-		.andExpect(jsonPath("$.data['productList'][0].no", is(1)))
-		.andExpect(jsonPath("$.data['productList'][0].name", is("반팔")))
-		.andExpect(jsonPath("$.data['productList'][0].price", is(35000)))
-		.andExpect(jsonPath("$.data['productList'][0].shortDescription", is("기능성 티셔츠")))
-		.andExpect(jsonPath("$.data['productList'][0].alignUse", is("Y")))
-		.andExpect(jsonPath("$.data['productList'][0].alignNo", is(1)))
-		//이미지
-		.andExpect(jsonPath("$.data['imageList'][0].no", is(1)))
-		.andExpect(jsonPath("$.data['imageList'][0].productNo", is(1)))
-		.andExpect(jsonPath("$.data['imageList'][0].url", is("/image/shop-uploads/test.png")))
-		.andExpect(jsonPath("$.data['imageList'][0].repOrBasic", is("R")));
+		.andExpect(jsonPath("$.data.categoryList[0].no", is(1)))
+		.andExpect(jsonPath("$.data.categoryList[0].name", is("category1")));
 	}
 	
-	//상품 상세 by 상품번호
+	//카테고리 추가
 	@Test
-	public void testProductDetail() throws Exception {
+	public void testBCategoryWrite() throws Exception {
 		//test >> api
 		ResultActions resultActions = 
-				mockMvc.perform(get("/api/product/detail/{no}",1L).contentType(MediaType.APPLICATION_JSON));
-		
+				mockMvc.perform(post("/api/admincategory/add")
+						.param("name", "categoryTest1")
+						.contentType(MediaType.APPLICATION_JSON));
+
 		resultActions
-		//상품
 		.andExpect(status().isOk()).andDo(print())
 		.andExpect(jsonPath("$.result", is("success")))
-		.andExpect(jsonPath("$.data", is("상품 O")));
+		.andExpect(jsonPath("$.data.flag", is(true)));
+	}
+	
+	//카테고리 수정
+	@Test
+	public void testCCategoryUpdate() throws Exception {
+		//test >> api
+		ResultActions resultActions = 
+				mockMvc.perform(put("/api/admincategory/update/{no}",1L)
+						.param("name", "categoryTest2")
+						.contentType(MediaType.APPLICATION_JSON));
+		
+		resultActions
+		.andExpect(status().isOk()).andDo(print())
+		.andExpect(jsonPath("$.result", is("success")))
+		.andExpect(jsonPath("$.data.flag", is(true)));
+	}
+	
+	//카테고리 삭제
+	@Test
+	public void testDCategoryDelete() throws Exception {
+		//test >> api
+		ResultActions resultActions = 
+				mockMvc.perform(delete("/api/admincategory/delete/{no}",1L).contentType(MediaType.APPLICATION_JSON));
+	
+		resultActions
+		.andExpect(status().isOk()).andDo(print())
+		.andExpect(jsonPath("$.result", is("success")))
+		.andExpect(jsonPath("$.data.flag", is(true)));
 	}
 	
 	@AfterClass
 	public static void resetDB() {
 		
 	}
-	
 	
 }

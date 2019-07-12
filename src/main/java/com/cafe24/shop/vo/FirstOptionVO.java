@@ -6,6 +6,16 @@ public class FirstOptionVO {
 	private Long productNo;
 	private String name;
 	
+	public FirstOptionVO() {
+
+	}
+	
+	public FirstOptionVO(Long no, Long productNo, String name) {
+		this.no=no;
+		this.productNo=productNo;
+		this.name=name;
+	}
+	
 	public Long getNo() {
 		return no;
 	}

@@ -1,5 +1,7 @@
 package com.cafe24.shop.vo;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 //일단, 기본 정보만 테스트
 public class OrderVO {
 	
@@ -16,9 +18,37 @@ public class OrderVO {
 	private String receiverMsg;
 	private String orderDate;
 	private int paymentPrice;
+	@NotEmpty
+	private String status;
 	
+	public OrderVO() {
+		
+	}
 	
+	public OrderVO(Long no, String memberId, String customerName, String customerAddress, String customerPhone,
+			 	   String customerEmail, String receiverName, String receiverAddress, String receiverPhone,
+			 	   String receiverMsg, String orderDate, int paymentPrice, String status) {
+		this.no=no;
+		this.memberId=memberId;
+		this.customerName=customerName;
+		this.customerAddress=customerAddress;
+		this.customerPhone=customerPhone;
+		this.customerEmail=customerEmail;
+		this.receiverName=receiverName;
+		this.receiverAddress=receiverAddress;
+		this.receiverPhone=receiverPhone;
+		this.orderDate=orderDate;
+		this.receiverMsg=receiverMsg;
+		this.paymentPrice=paymentPrice;
+		this.status=status;
+	}
 	
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
+	}
 	public Long getNo() {
 		return no;
 	}
@@ -98,6 +128,6 @@ public class OrderVO {
 				+ customerAddress + ", customerPhone=" + customerPhone + ", customerEmail=" + customerEmail
 				+ ", receiverName=" + receiverName + ", receiverAddress=" + receiverAddress + ", receiverPhone="
 				+ receiverPhone + ", receiverMsg=" + receiverMsg + ", orderDate=" + orderDate + ", paymentPrice="
-				+ paymentPrice + "]";
+				+ paymentPrice + ", status=" + status + "]";
 	}
 }

@@ -19,8 +19,8 @@ public class MemberService {
 	}
 	
 	//test by 하드코딩
-	//회원가입
-	public boolean 회원가입(MemberVO mvo) {
+	//조인
+	public boolean 조인(MemberVO mvo) {
 		if(mvo!=null) return true;
 		return false;
 	}
@@ -33,23 +33,21 @@ public class MemberService {
 	}
 	
 	//test by 하드코딩
-	//회원 정보 수정
-	public MemberVO 회원정보조회(String id) {
-		MemberVO mvo = new MemberVO("test","pw","test","서울","010-1111-1111"
-									,"test@naver.com","USER","2018-10-01");
-			
+	//회원조회
+	public MemberVO 회원조회(String id) {
+		MemberVO mvo = new MemberVO("test","pw","test","서울","010-1111-1111","test@naver.com","USER","2018-10-01");
 		return mvo;
 	}
 	
 	//test by 하드코딩
-	//회원 정보 수정
-	public boolean 회원정보수정(MemberVO mvo) {
+	//회원수정
+	public boolean 회원수정(String id, MemberVO mvo) {
 		if(mvo!=null) return true;
 		return false;
 	}
 	
 	//test by 하드코딩
-	//회원 탈퇴 = 삭제
+	//회원탈퇴
 	public boolean 회원탈퇴(String password) {
 		if(password!=null) return true;
 		return false;

@@ -2,14 +2,11 @@ package com.cafe24.shop.controller.api;
 
 import static org.hamcrest.Matchers.*;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -28,13 +25,14 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.cafe24.shop.config.AppConfig;
 import com.cafe24.shop.config.TestWebConfig;
+import com.cafe24.shop.vo.MemberVO;
 import com.google.gson.Gson;
 
-//주문 컨트롤러 테스트 클래스
+//상품 컨트롤러 테스트 클래스
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes= {AppConfig.class, TestWebConfig.class})
 @WebAppConfiguration
-public class OrderControllerTest {
+public class UserProductControllerTest {
 
 	private MockMvc mockMvc;
 	
@@ -51,50 +49,49 @@ public class OrderControllerTest {
 		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 	}
 	
-	//(고객) 장바구니 담기
+	//(고객)상품전체목록 조회 >> Map 타입 리턴 >> 추후 카테고리, 검색 활용한 조회 내용 추가
 	@Test
-	public void testCartAdd() throws Exception {
-		Map<String, Object> map = new HashMap<>();
-		
-		map.put("memberId","test");
-		map.put("productNo",1L);
-		map.put("secondOptionNo",1L);
-		//개당 2만원
-		map.put("cartAmount",3L);
-		map.put("cartPrice",60000);
-		
+	public void testProductListRead() throws Exception {
 		//test >> api
 		ResultActions resultActions = 
-				mockMvc.perform(post("/api/order/cart/add").contentType(MediaType.APPLICATION_JSON).content(new Gson().toJson(map)));
+				mockMvc.perform(get("/api/product/list").contentType(MediaType.APPLICATION_JSON));
 		
+		//일부 데이터만 확인
 		resultActions
+		//상품
 		.andExpect(status().isOk()).andDo(print())
 		.andExpect(jsonPath("$.result", is("success")))
-		.andExpect(jsonPath("$.data", is(true)));
+		.andExpect(jsonPath("$.data['productList'][0].no", is(1)))
+		.andExpect(jsonPath("$.data['productList'][0].name", is("반팔")))
+		.andExpect(jsonPath("$.data['productList'][0].price", is(35000)))
+		.andExpect(jsonPath("$.data['productList'][0].shortDescription", is("기능성 티셔츠")))
+		.andExpect(jsonPath("$.data['productList'][0].alignUse", is("Y")))
+		.andExpect(jsonPath("$.data['productList'][0].alignNo", is(1)))
+		//이미지
+		.andExpect(jsonPath("$.data['imageList'][0].no", is(1)))
+		.andExpect(jsonPath("$.data['imageList'][0].productNo", is(1)))
+		.andExpect(jsonPath("$.data['imageList'][0].url", is("/image/shop-uploads/test.png")))
+		.andExpect(jsonPath("$.data['imageList'][0].repOrBasic", is("R")));
 	}
 	
-	//(고객) 장바구니 조회
+	//상품 상세 by 상품번호
 	@Test
-	public void testCartList() throws Exception {
+	public void testProductViewRead() throws Exception {
 		//test >> api
 		ResultActions resultActions = 
-				mockMvc.perform(get("/api/order/cart/{id}","test").contentType(MediaType.APPLICATION_JSON));
+				mockMvc.perform(get("/api/product/detail/{no}",1L).contentType(MediaType.APPLICATION_JSON));
 		
 		resultActions
+		//상품
 		.andExpect(status().isOk()).andDo(print())
 		.andExpect(jsonPath("$.result", is("success")))
-		.andExpect(jsonPath("$.data[0].memberId", is("test")))
-		.andExpect(jsonPath("$.data[0].productNo", is(1)))
-		.andExpect(jsonPath("$.data[0].secondOptionNo", is(1)))
-		.andExpect(jsonPath("$.data[0].cartAmount", is(3)))
-		.andExpect(jsonPath("$.data[0].cartPrice", is(60000)));
+		.andExpect(jsonPath("$.data", is("상품 O")));
 	}
 	
 	@AfterClass
 	public static void resetDB() {
 		
 	}
-	
 	
 	
 }

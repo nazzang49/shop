@@ -1,28 +1,33 @@
 package com.cafe24.shop.vo;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.NotEmpty;
+
 //일단, 기본 정보만 테스트
 public class ProductVO {
 	
 	//상품 기본 정보
 	//pk
 	private Long no;
+	@NotEmpty
 	private String name;
+	@NotNull
+	@Min(0)
 	private int price;
 	private String shortDescription;
 	private String alignUse;
 	private Long alignNo;
 	
 	//상품별 카테고리 정보 >> 조인 실시
-	private Long firstCategoryNo;
-	private Long secondCategoryNo;
-	private Long thirdCategoryNo;
+	private Long categoryNo;
 	
 	public ProductVO() {
 		
 	}
 	
-	public ProductVO(Long no, String name, int price, String shortDescription, String alignUse, Long alignNo,
-					 Long firstCategoryNo, Long secondCategoryNo, Long thirdCategoryNo) {
+	public ProductVO(Long no, String name, int price, String shortDescription, String alignUse, Long alignNo, Long categoryNo) {
 		
 		this.no=no;
 		this.name=name;
@@ -30,9 +35,7 @@ public class ProductVO {
 		this.shortDescription=shortDescription;
 		this.alignUse=alignUse;
 		this.alignNo=alignNo;
-		this.firstCategoryNo=firstCategoryNo;
-		this.secondCategoryNo=secondCategoryNo;
-		this.thirdCategoryNo=thirdCategoryNo;
+		this.categoryNo=categoryNo;
 	}
 	
 	public Long getNo() {
@@ -71,29 +74,16 @@ public class ProductVO {
 	public void setAlignNo(Long alignNo) {
 		this.alignNo = alignNo;
 	}
-	public Long getFirstCategoryNo() {
-		return firstCategoryNo;
+	public Long getCategoryNo() {
+		return categoryNo;
 	}
-	public void setFirstCategoryNo(Long firstCategoryNo) {
-		this.firstCategoryNo = firstCategoryNo;
+	public void setCategoryNo(Long categoryNo) {
+		this.categoryNo = categoryNo;
 	}
-	public Long getSecondCategoryNo() {
-		return secondCategoryNo;
-	}
-	public void setSecondCategoryNo(Long secondCategoryNo) {
-		this.secondCategoryNo = secondCategoryNo;
-	}
-	public Long getThirdCategoryNo() {
-		return thirdCategoryNo;
-	}
-	public void setThirdCategoryNo(Long thirdCategoryNo) {
-		this.thirdCategoryNo = thirdCategoryNo;
-	}
-	
+
 	@Override
 	public String toString() {
 		return "ProductVO [no=" + no + ", name=" + name + ", price=" + price + ", shortDescription=" + shortDescription
-				+ ", alignUse=" + alignUse + ", alignNo=" + alignNo + ", firstCategoryNo=" + firstCategoryNo
-				+ ", secondCategoryNo=" + secondCategoryNo + ", thirdCategoryNo=" + thirdCategoryNo + "]";
+				+ ", alignUse=" + alignUse + ", alignNo=" + alignNo + ", categoryNo=" + categoryNo + "]";
 	}
 }
