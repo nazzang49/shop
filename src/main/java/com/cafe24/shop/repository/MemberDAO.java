@@ -12,35 +12,56 @@ import com.cafe24.shop.vo.MemberVO;
 public class MemberDAO {
 
 	@Autowired
-	private DataSource datasource;
-	
-	@Autowired
 	private SqlSession sqlSession;
 	
-	public MemberDAO() {
-		System.out.println("UserDAO 생성자");
+	private final String keyValue = "shop-keyValue";
+	
+	//아이디 중복 체크
+	public MemberVO checkid(MemberVO memberVO) {
+		return sqlSession.selectOne("member.checkid", memberVO);
 	}
 	
-	//회원추가(세션 팩토리)
-	public boolean insert(MemberVO vo) {
-		return sqlSession.insert("user.insert", vo)==1;
+	//조인
+	public boolean insert(MemberVO memberVO) {
+		memberVO.setKeyValue(keyValue);
+		return sqlSession.insert("member.insert", memberVO)==1;
 	}
 	
-	//회원정보 변경
-	public boolean update(MemberVO vo) {
-		return sqlSession.update("user.update", vo)==1;
+	//로그인
+	public MemberVO selectByIdAndPassword(MemberVO memberVO) {
+		memberVO.setKeyValue(keyValue);
+		return sqlSession.selectOne("member.selectByIdAndPassword", memberVO);
 	}
 	
-	public MemberVO get(Long no) {
-		MemberVO vo = sqlSession.selectOne("user.getByNo",no);
-		return vo;
+	//회원조회
+	public MemberVO selectById(MemberVO memberVO) {
+		memberVO.setKeyValue(keyValue);
+		return sqlSession.selectOne("member.selectById", memberVO);
+	}
+		
+	//회원수정
+	public boolean update(MemberVO memberVO) {
+		memberVO.setKeyValue(keyValue);
+		return sqlSession.update("member.update", memberVO)==1;
 	}
 	
-	public MemberVO get(String email) {
-		MemberVO vo = sqlSession.selectOne("user.getByEmail",email);
-		return vo;
+	//회원탈퇴
+	public boolean delete(MemberVO memberVO) {
+		memberVO.setKeyValue(keyValue);
+		return sqlSession.delete("member.delete", memberVO)==1;
 	}
 	
+//	
+//	public MemberVO get(Long no) {
+//		MemberVO vo = sqlSession.selectOne("user.getByNo",no);
+//		return vo;
+//	}
+//	
+//	public MemberVO get(String email) {
+//		MemberVO vo = sqlSession.selectOne("user.getByEmail",email);
+//		return vo;
+//	}
+//	
 	//로그인하는 사용자의 세션값 저장을 위한 정보 추출
 	public MemberVO get(String email, String pw) {
 		Map<String, String> map = new HashMap<>();

@@ -2,6 +2,7 @@ package com.cafe24.shop.controller.api;
 
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -48,5 +49,35 @@ public class AdminUserControllerTest {
 	public void setup() {
 		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 	}
+	
+	//회원목록
+	@Test
+	public void testAUserListRead() throws Exception {
+		//test >> api
+		ResultActions resultActions = 
+				mockMvc.perform(get("/api/adminuser/list").contentType(MediaType.APPLICATION_JSON));
+		
+		resultActions
+		//상품
+		.andExpect(status().isOk()).andDo(print())
+		.andExpect(jsonPath("$.result", is("success")))
+		.andExpect(jsonPath("$.data['userList'][0].id", is("test1")))
+		.andExpect(jsonPath("$.data['userList'][0].name", is("박진영")))
+		.andExpect(jsonPath("$.data['userList'][0].address", is("서울")));
+	}
+	
+	//회원 삭제
+	@Test
+	public void testBUserDelete() throws Exception {
+		//test >> api
+		ResultActions resultActions = 
+				mockMvc.perform(delete("/api/adminuser/delete/{id}","test1").contentType(MediaType.APPLICATION_JSON));
+	
+		resultActions
+		.andExpect(status().isOk()).andDo(print())
+		.andExpect(jsonPath("$.result", is("success")))
+		.andExpect(jsonPath("$.data.flag", is(true)));
+	}
+	
 	
 }

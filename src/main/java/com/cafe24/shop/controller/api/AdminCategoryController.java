@@ -4,11 +4,20 @@ import java.util.HashMap;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import javax.validation.ConstraintViolation;
 import javax.validation.Valid;
+import javax.validation.Validation;
+import javax.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -21,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cafe24.shop.dto.JSONResult;
 import com.cafe24.shop.service.AdminCategoryService;
 import com.cafe24.shop.vo.CategoryVO;
+import com.cafe24.shop.vo.MemberVO;
 
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -32,10 +42,12 @@ import io.swagger.annotations.ApiOperation;
 public class AdminCategoryController {
 
 	@Autowired
+	private MessageSource messageSource;
+	
+	@Autowired
 	private AdminCategoryService adminCategoryService;
 	
-	//카테고리  목록
-	//@Auth(role=Auth.Role.ADMIN)
+	//카테고리 목록
 	@ApiOperation(value="카테고리 목록")
 	@GetMapping(value="/list")
 	public JSONResult getList() {
@@ -53,19 +65,25 @@ public class AdminCategoryController {
 		return result;
 	}
 	
-	//카테고리  추가
-	//@Auth(role=Auth.Role.ADMIN) >> 추후 인증 처리
+	//카테고리 추가
 	@ApiImplicitParams({
-		@ApiImplicitParam(name="name", value="카테고리 이름", required=true, dataType="string", defaultValue="")
+		@ApiImplicitParam(name="name", value="카테고리 이름", required=true, dataType="string", defaultValue=""),
+		@ApiImplicitParam(name="groupNo", value="그룹 번호", required=true, dataType="string", defaultValue=""),
+		@ApiImplicitParam(name="depth", value="깊이", required=true, dataType="string", defaultValue="")
 	})
 	@ApiOperation(value="카테고리 추가")
 	@PostMapping(value="/add")
-	public JSONResult add(@ModelAttribute @Valid CategoryVO cvo,
-						  BindingResult br) {
+	public ResponseEntity<JSONResult> add(@ModelAttribute @Valid CategoryVO cvo,
+						  				  BindingResult br) {
 		
 		//valid
 		if(br.hasErrors()) {
-			return JSONResult.fail("입력 실패");
+			List<ObjectError> errorList = br.getAllErrors();
+			for(ObjectError error : errorList) {
+				String msg = error.getDefaultMessage();
+				JSONResult result = JSONResult.fail(msg);
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);	
+			}
 		}
 				
 		
@@ -78,25 +96,33 @@ public class AdminCategoryController {
 		Map<String, Object> data = new HashMap<>();
 		data.put("flag", flag);
 		JSONResult result = JSONResult.success(data);
-		return result;
+		return ResponseEntity.status(HttpStatus.OK).body(result);
 	}
 	
-	//카테고리  수정
-	//@Auth(role=Auth.Role.ADMIN)
+	//카테고리 수정
 	@ApiImplicitParams({
 		@ApiImplicitParam(name="no", value="카테고리 번호", required=true, dataType="path", defaultValue=""),
 		@ApiImplicitParam(name="name", value="카테고리 이름", required=true, dataType="string", defaultValue="")
 	})
 	@ApiOperation(value="카테고리 수정")
 	@PutMapping(value="/update/{no}")
-	public JSONResult udpate(@ModelAttribute @Valid CategoryVO cvo,
-							 BindingResult br) {
+	public ResponseEntity<JSONResult> udpate(@ModelAttribute CategoryVO cvo,
+							 				 BindingResult br) {
 		//관리자 인증
 		
 		
-		//valid
-		if(br.hasErrors()) {
-			return JSONResult.fail("입력 실패");
+		//valid >> 아이디, 비밀번호 2개 입력값 >> MemberVO에서 로그인 시 필요하지 않은 데이터 별도 처리 필요 or 에러 발생
+		Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+		Set<ConstraintViolation<CategoryVO>> validatorResults = validator.validateProperty(cvo, "name");
+		
+		if(!validatorResults.isEmpty()) {
+			for(ConstraintViolation<CategoryVO> validatorResult : validatorResults) {
+				String msg = messageSource.getMessage("NotEmpty.cvo.name", null, LocaleContextHolder.getLocale());
+				JSONResult result = JSONResult.fail(msg);
+				//에러가 발생한 변수 확인
+				System.out.println(validatorResult.getPropertyPath());
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
+			}
 		}
 		
 		
@@ -106,11 +132,10 @@ public class AdminCategoryController {
 		Map<String, Object> data = new HashMap<>();
 		data.put("flag", flag);
 		JSONResult result = JSONResult.success(data);
-		return result;
+		return ResponseEntity.status(HttpStatus.OK).body(result);
 	}
 	
-	//카테고리  삭제
-	//@Auth(role=Auth.Role.ADMIN)
+	//카테고리 삭제
 	@ApiImplicitParams({
 		@ApiImplicitParam(name="no", value="카테고리 번호", required=true, dataType="path", defaultValue="")
 	})

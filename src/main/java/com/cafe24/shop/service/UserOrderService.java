@@ -36,15 +36,10 @@ public class UserOrderService {
 	
 	//test by 하드코딩
 	//장바구니 담기
-	public boolean 장바구니담기(CartVO cvo) {
+	public boolean 장바구니추가(CartVO cvo) {
 		initTables();
 		if(cvo!=null) {
-			if(productTable.contains(cvo.getProductNo())
-									 &&optionTable.contains(cvo.getSecondOptionNo())
-									 &&memberTable.contains(cvo.getMemberId())) {
-				
-				return true;
-			}
+			if(optionTable.contains(cvo.getProductOptionNo())&&memberTable.contains(cvo.getMemberId())) return true;
 		}
 		return false;
 	}
@@ -56,8 +51,10 @@ public class UserOrderService {
 		List<String> categoryList = new ArrayList<>();
 		
 		//현재 고객 장바구니 리스트
-		if(cartTable.contains(memberId)) {
-			categoryList.add(memberId);
+		if(memberId!=null) {
+			if(cartTable.contains(memberId)) {
+				categoryList.add(memberId);
+			}
 		}
 		return categoryList;
 	}

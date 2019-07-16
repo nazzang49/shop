@@ -35,7 +35,9 @@ public class UserProductController {
 	public JSONResult detail(@PathVariable(value="no") Long no) {
 		boolean flag = productService.상품조회(no);
 		
-		JSONResult result = JSONResult.success(flag ? "상품 O" : "상품 X");
+		Map<String, Object> data = new HashMap<>();
+		data.put("flag", flag);
+		JSONResult result = JSONResult.success(data);
 		return result;
 	}	
 	

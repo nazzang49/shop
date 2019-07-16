@@ -49,14 +49,13 @@ public class UserProductControllerTest {
 		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 	}
 	
-	//(고객)상품전체목록 조회 >> Map 타입 리턴 >> 추후 카테고리, 검색 활용한 조회 내용 추가
+	//(고객)상품목록 >> 추후 카테고리, 검색 활용한 조회 내용 추가
 	@Test
-	public void testProductListRead() throws Exception {
+	public void testAProductListRead() throws Exception {
 		//test >> api
 		ResultActions resultActions = 
 				mockMvc.perform(get("/api/product/list").contentType(MediaType.APPLICATION_JSON));
 		
-		//일부 데이터만 확인
 		resultActions
 		//상품
 		.andExpect(status().isOk()).andDo(print())
@@ -67,16 +66,16 @@ public class UserProductControllerTest {
 		.andExpect(jsonPath("$.data['productList'][0].shortDescription", is("기능성 티셔츠")))
 		.andExpect(jsonPath("$.data['productList'][0].alignUse", is("Y")))
 		.andExpect(jsonPath("$.data['productList'][0].alignNo", is(1)))
-		//이미지
+		//썸네일 이미지
 		.andExpect(jsonPath("$.data['imageList'][0].no", is(1)))
 		.andExpect(jsonPath("$.data['imageList'][0].productNo", is(1)))
 		.andExpect(jsonPath("$.data['imageList'][0].url", is("/image/shop-uploads/test.png")))
 		.andExpect(jsonPath("$.data['imageList'][0].repOrBasic", is("R")));
 	}
 	
-	//상품 상세 by 상품번호
+	//상품 상세
 	@Test
-	public void testProductViewRead() throws Exception {
+	public void testBProductViewRead() throws Exception {
 		//test >> api
 		ResultActions resultActions = 
 				mockMvc.perform(get("/api/product/detail/{no}",1L).contentType(MediaType.APPLICATION_JSON));
@@ -85,7 +84,7 @@ public class UserProductControllerTest {
 		//상품
 		.andExpect(status().isOk()).andDo(print())
 		.andExpect(jsonPath("$.result", is("success")))
-		.andExpect(jsonPath("$.data", is("상품 O")));
+		.andExpect(jsonPath("$.data.flag", is(true)));
 	}
 	
 	@AfterClass

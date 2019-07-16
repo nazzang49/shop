@@ -11,46 +11,41 @@ public class MemberService {
 	@Autowired
 	private MemberDAO userDao;
 	
-	//test by 하드코딩
 	//아이디 중복 체크
-	public boolean 아이디중복체크(String id) {
-		if(id!=null) return true;
-		return false;
-	}
-	
-	//test by 하드코딩
-	//조인
-	public boolean 조인(MemberVO mvo) {
+	public boolean 아이디중복체크(MemberVO memberVO) {
+		MemberVO mvo = userDao.checkid(memberVO);
+		//중복 O
 		if(mvo!=null) return true;
+		//중복 X
 		return false;
 	}
 	
-	//test by 하드코딩
+	//조인
+	public boolean 조인(MemberVO memberVO) {
+		return userDao.insert(memberVO);
+	}
+	
 	//로그인
-	public boolean 로그인(String id, String password) {
-		if(id!=null&&password!=null) return true;
+	public boolean 로그인(MemberVO memberVO) {
+		MemberVO authUser = userDao.selectByIdAndPassword(memberVO);
+		if(authUser!=null) return true;
 		return false;
 	}
 	
-	//test by 하드코딩
 	//회원조회
-	public MemberVO 회원조회(String id) {
-		MemberVO mvo = new MemberVO("test","pw","test","서울","010-1111-1111","test@naver.com","USER","2018-10-01");
+	public MemberVO 회원조회(MemberVO memberVO) {
+		MemberVO mvo = userDao.selectById(memberVO);
 		return mvo;
 	}
 	
-	//test by 하드코딩
 	//회원수정
-	public boolean 회원수정(String id, MemberVO mvo) {
-		if(mvo!=null) return true;
-		return false;
+	public boolean 회원수정(MemberVO memberVO) {
+		return userDao.update(memberVO);
 	}
 	
-	//test by 하드코딩
 	//회원탈퇴
-	public boolean 회원탈퇴(String password) {
-		if(password!=null) return true;
-		return false;
+	public boolean 회원탈퇴(MemberVO memberVO) {
+		return userDao.delete(memberVO);
 	}
 	
 	//로그인 세션 >> 보류

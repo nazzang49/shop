@@ -16,8 +16,8 @@ public class AdminOrderService {
 	//DB 초기화
 	public void initTables() {
 		orderTable.clear();
-		orderTable.add(new OrderVO(1L, "test", "박진영", "서울", "010-1111-1111", "test@naver.com", "박진수", "부산", "010-2222-2222", "부재 시 경비실", "2018-10-01", 60000, "입금대기"));
-		orderTable.add(new OrderVO(2L, "test", "박진성", "서울", "010-1111-1111", "test@naver.com", "박우성", "부산", "010-2222-2222", "부재 시 경비실", "2018-10-01", 60000, "입금대기"));
+		orderTable.add(new OrderVO(1L, "test", "박진영", "서울", "010-1111-1111", "test@naver.com", "박진수", "부산", "010-2222-2222", "부재 시 경비실", "2018-10-01", 60000L, "입금대기"));
+		orderTable.add(new OrderVO(2L, "test", "박진성", "서울", "010-1111-1111", "test@naver.com", "박우성", "부산", "010-2222-2222", "부재 시 경비실", "2018-10-01", 60000L, "입금대기"));
 	}
 	
 	//test by 하드코딩

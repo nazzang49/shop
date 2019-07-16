@@ -17,8 +17,8 @@ public class AdminProductService {
 	//DB 초기화
 	public void initTables() {
 		productTable.clear();
-		productTable.add(new ProductVO(1L, "productTest1", 20000, "설명", "Y", 1L, 1L));
-		productTable.add(new ProductVO(2L, "productTest2", 40000, "설명", "Y", 2L, 2L));
+		productTable.add(new ProductVO(1L, "productTest1", 20000L, "설명", "Y", 1L, 1L));
+		productTable.add(new ProductVO(2L, "productTest2", 40000L, "설명", "Y", 2L, 2L));
 	}
 	
 	//test by 하드코딩
@@ -48,6 +48,9 @@ public class AdminProductService {
 					//DB와 비교 >> 수정 >> 수정된 리스트 리턴
 					tvo.setName(pvo.getName());
 					tvo.setPrice(pvo.getPrice());
+					tvo.setShortDescription(pvo.getShortDescription());
+					tvo.setAlignUse(pvo.getAlignUse());
+					tvo.setAlignNo(pvo.getAlignNo());
 					productTable.set(i, tvo);
 					return productTable;
 				}

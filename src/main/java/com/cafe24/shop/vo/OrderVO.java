@@ -1,5 +1,7 @@
 package com.cafe24.shop.vo;
 
+import javax.validation.constraints.NotNull;
+
 import org.hibernate.validator.constraints.NotEmpty;
 
 //일단, 기본 정보만 테스트
@@ -8,16 +10,26 @@ public class OrderVO {
 	//pk
 	private Long no;
 	private String memberId;
+	@NotEmpty
 	private String customerName;
+	@NotEmpty
 	private String customerAddress;
+	@NotEmpty
 	private String customerPhone;
+	@NotEmpty
 	private String customerEmail;
+	@NotEmpty
 	private String receiverName;
+	@NotEmpty
 	private String receiverAddress;
+	@NotEmpty
 	private String receiverPhone;
+	@NotEmpty
 	private String receiverMsg;
+	@NotEmpty
 	private String orderDate;
-	private int paymentPrice;
+	@NotNull
+	private Long paymentPrice;
 	@NotEmpty
 	private String status;
 	
@@ -27,7 +39,7 @@ public class OrderVO {
 	
 	public OrderVO(Long no, String memberId, String customerName, String customerAddress, String customerPhone,
 			 	   String customerEmail, String receiverName, String receiverAddress, String receiverPhone,
-			 	   String receiverMsg, String orderDate, int paymentPrice, String status) {
+			 	   String receiverMsg, String orderDate, Long paymentPrice, String status) {
 		this.no=no;
 		this.memberId=memberId;
 		this.customerName=customerName;
@@ -115,10 +127,10 @@ public class OrderVO {
 	public void setOrderDate(String orderDate) {
 		this.orderDate = orderDate;
 	}
-	public int getPaymentPrice() {
+	public Long getPaymentPrice() {
 		return paymentPrice;
 	}
-	public void setPaymentPrice(int paymentPrice) {
+	public void setPaymentPrice(Long paymentPrice) {
 		this.paymentPrice = paymentPrice;
 	}
 	

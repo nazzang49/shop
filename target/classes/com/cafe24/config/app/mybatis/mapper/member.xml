@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="member">
+
+	<!-- 아이디 중복 체크 -->
+	<select id="checkid" parameterType="membervo" resultType="membervo">
+	<![CDATA[
+		select *
+		from member
+		where id=#{id}
+	]]>
+	</select>
+
+	<!-- 조인 -->
+	<!-- 개인정보 >> 암호화 -->
+	<insert id="insert" parameterType="membervo">
+	<![CDATA[
+		insert into member
+		values(
+		#{id},
+		aes_encrypt(#{password},#{keyValue}),
+		aes_encrypt(#{name},#{keyValue}),
+		aes_encrypt(#{address},#{keyValue}),
+		aes_encrypt(#{phone},#{keyValue}),
+		aes_encrypt(#{email},#{keyValue}),
+		#{role},
+		now())
+	]]>
+	</insert>
+	
+	<!-- 로그인 >> 복호화 후, 문자열 변환 -->
+	<select id="selectByIdAndPassword" parameterType="membervo" resultType="membervo">
+	<![CDATA[
+		select
+		id,
+		cast(aes_decrypt(name, #{keyValue}) as char) as name,
+		cast(aes_decrypt(phone, #{keyValue}) as char) as phone,
+		cast(aes_decrypt(email, #{keyValue}) as char) as email,
+		cast(aes_decrypt(address, #{keyValue}) as char) as address,
+		regDate,
+		role
+		from member
+		where id=#{id}
+		and password=aes_encrypt(#{password}, #{keyValue})
+	]]>
+	</select>
+	
+	<!-- 회원조회 -->
+	<select id="selectById" parameterType="membervo" resultType="membervo">
+	<![CDATA[
+		select
+		id,
+		cast(aes_decrypt(name, #{keyValue}) as char) as name,
+		cast(aes_decrypt(phone, #{keyValue}) as char) as phone,
+		cast(aes_decrypt(email, #{keyValue}) as char) as email,
+		cast(aes_decrypt(address, #{keyValue}) as char) as address,
+		regDate,
+		role
+		from member
+		where id=#{id}
+	]]>
+	</select>
+	
+	<!-- 회원수정 -->
+	<update id="update" parameterType="membervo">
+	<![CDATA[
+		update member set
+		password=aes_encrypt(#{password}, #{keyValue}),
+		name=aes_encrypt(#{name}, #{keyValue}),
+		address=aes_encrypt(#{address}, #{keyValue}),
+		phone=aes_encrypt(#{phone}, #{keyValue}),
+		email=aes_encrypt(#{email}, #{keyValue})
+		where id=#{id}
+	]]>
+	</update>
+	
+	<!-- 회원삭제 -->
+	<delete id="delete" parameterType="membervo">
+	<![CDATA[
+		delete
+		from member
+		where id=#{id}
+		and password=aes_encrypt(#{password}, #{keyValue})
+	]]>
+	</delete>
+	
+</mapper>

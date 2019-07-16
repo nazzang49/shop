@@ -5,49 +5,52 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.cafe24.shop.vo.FirstOptionVO;
-import com.cafe24.shop.vo.SecondOptionVO;
+import com.cafe24.shop.vo.OptionVO;
+import com.cafe24.shop.vo.ProductOptionVO;
 
 //(관리자) 옵션 서비스
 @Service
 public class AdminOptionService {
 	
 	//옵션 DB
-	private static List<FirstOptionVO> firstOptionTable = new ArrayList<>();
-	private static List<SecondOptionVO> secondOptionTable = new ArrayList<>();
+	private static List<OptionVO> optionTable = new ArrayList<>();
+	
+	//상품옵션 DB
+	private static List<ProductOptionVO> productOptionTable = new ArrayList<>();
 	
 	//DB 초기화
 	public void initTables() {
-		firstOptionTable.clear();
-		secondOptionTable.clear();
+		optionTable.clear();
+		productOptionTable.clear();
 		
-		//1번 상품에 대한 2개의 상위 옵션
-		firstOptionTable.add(new FirstOptionVO(1L, 1L, "색상"));
-		firstOptionTable.add(new FirstOptionVO(2L, 1L, "사이즈"));
+		//1번 상품에 대한 옵션 추가 >> 깊이 1
+		optionTable.add(new OptionVO(1L, 1L, "블랙", 1L));
+		//1번 상품에 대한 옵션 추가 >> 깊이 2
+		optionTable.add(new OptionVO(2L, 1L, "화이트", 2L));
 		
-		//1번 상품의 2개의 상위 옵션에 대한 하위 옵션 + 재고 + 판매 가능  수량
-		secondOptionTable.add(new SecondOptionVO(1L, "블랙", 1000L, 930L));
-		secondOptionTable.add(new SecondOptionVO(1L, "L", 1000L, 930L));
+		//1번 상품의 1차 옵션 번호 = 1, 2차 옵션 번호 = 2
+		productOptionTable.add(new ProductOptionVO(1L, 1L, 1L, 2L, 1000L, 930L));
+		//1번 상품의 1차 옵션 번호 = 3, 2차 옵션 번호 = 4
+		productOptionTable.add(new ProductOptionVO(2L, 1L, 3L, 4L, 1000L, 930L));
 	}
 	
 	//test by 하드코딩
-	//상위 옵션 추가 >> 추가 확인
-	public List<FirstOptionVO> 상위옵션추가(FirstOptionVO fvo) {
+	//옵션 추가 >> 추가 확인
+	public List<OptionVO> 옵션추가(OptionVO fvo) {
 		initTables();
 		if(fvo!=null) {
-			firstOptionTable.add(fvo);
-			System.out.println("상위 옵션 테이블 사이즈 : "+firstOptionTable.size());
-			return firstOptionTable;
+			optionTable.add(fvo);
+			return optionTable;
 		}
-		return firstOptionTable;
+		return optionTable;
 	}
 	
 	//test by 하드코딩
-	//상위 옵션 삭제
-	public boolean 상위옵션삭제(Long no) {
+	//옵션 삭제
+	public boolean 옵션삭제(Long no) {
 		initTables();
 		if(no!=null) {
-			for(FirstOptionVO tvo : firstOptionTable) if(tvo.getNo()==no) return true;
+			for(OptionVO tvo : optionTable) if(tvo.getNo()==no) return true;
 		}
 		return false;
 	}

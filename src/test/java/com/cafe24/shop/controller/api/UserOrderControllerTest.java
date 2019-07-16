@@ -54,28 +54,41 @@ public class UserOrderControllerTest {
 	
 	//(회원) 장바구니 추가
 	@Test
-	public void testCartWrite() throws Exception {
-		CartVO cvo = new CartVO();
+	public void testACartWrite() throws Exception {
+		CartVO cartVO = new CartVO();
 		
-		cvo.setMemberId("test");
-		cvo.setProductNo(1L);
-		cvo.setSecondOptionNo(1L);
-		cvo.setCartAmount(3L);
-		cvo.setCartPrice(60000L);
+		cartVO.setMemberId("test");
+		cartVO.setProductOptionNo(1L);
+		cartVO.setCartAmount(3L);
+		cartVO.setCartPrice(60000L);
 		
 		//test >> api
 		ResultActions resultActions = 
-				mockMvc.perform(post("/api/order/cart/add").contentType(MediaType.APPLICATION_JSON).content(new Gson().toJson(cvo)));
+				mockMvc.perform(post("/api/order/cart/add").contentType(MediaType.APPLICATION_JSON).content(new Gson().toJson(cartVO)));
 		
 		resultActions
 		.andExpect(status().isOk()).andDo(print())
 		.andExpect(jsonPath("$.result", is("success")))
 		.andExpect(jsonPath("$.data.flag", is(true)));
+
+		//invalidation in cartAmount = 수량 입력값 실패 케이스
+		cartVO = new CartVO();
+		cartVO.setMemberId("test");
+		cartVO.setProductOptionNo(1L);
+		cartVO.setCartPrice(60000L);
+		
+		//test >> api
+		resultActions = 
+				mockMvc.perform(post("/api/order/cart/add").contentType(MediaType.APPLICATION_JSON).content(new Gson().toJson(cartVO)));
+		
+		resultActions
+		.andExpect(status().isBadRequest()).andDo(print())
+		.andExpect(jsonPath("$.result", is("fail")));
 	}
 	
 	//(회원) 장바구니 조회
 	@Test
-	public void testCartListRead() throws Exception {
+	public void testBCartListRead() throws Exception {
 		//test >> api
 		ResultActions resultActions = 
 				mockMvc.perform(get("/api/order/cart/{memberId}","test").contentType(MediaType.APPLICATION_JSON));

@@ -1,45 +1,47 @@
 package com.cafe24.shop.vo;
 
-//일단, 기본 정보만 테스트
+import javax.validation.constraints.NotNull;
+
 public class CartVO {
 
+	private Long no;
 	private String memberId;
-	private Long productNo;
-	private Long secondOptionNo;
+	private Long productOptionNo;
 	//상품별 수량
+	@NotNull
 	private Long cartAmount;
-	//상품별 합계금액
+	//상품별 합계금액 >> 수량 기입 시, 자동 계산
 	private Long cartPrice;
 		
 	public CartVO() {
 		
 	}
 	
-	public CartVO(String memberId, Long productNo, Long secondOptionNo, Long cartAmount, Long cartPrice) {
+	public CartVO(Long no, String memberId, Long productOptionNo, Long cartAmount, Long cartPrice) {
+		this.no=no;
 		this.memberId=memberId;
-		this.productNo=productNo;
-		this.secondOptionNo=secondOptionNo;
+		this.productOptionNo=productOptionNo;
 		this.cartAmount=cartAmount;
 		this.cartPrice=cartPrice;
 	}
 	
+	public Long getNo() {
+		return no;
+	}
+	public void setNo(Long no) {
+		this.no = no;
+	}
 	public String getMemberId() {
 		return memberId;
 	}
 	public void setMemberId(String memberId) {
 		this.memberId = memberId;
 	}
-	public Long getProductNo() {
-		return productNo;
+	public Long getProductOptionNo() {
+		return productOptionNo;
 	}
-	public void setProductNo(Long productNo) {
-		this.productNo = productNo;
-	}
-	public Long getSecondOptionNo() {
-		return secondOptionNo;
-	}
-	public void setSecondOptionNo(Long secondOptionNo) {
-		this.secondOptionNo = secondOptionNo;
+	public void setProductOptionNo(Long productOptionNo) {
+		this.productOptionNo = productOptionNo;
 	}
 	public Long getCartAmount() {
 		return cartAmount;
@@ -56,8 +58,8 @@ public class CartVO {
 	
 	@Override
 	public String toString() {
-		return "CartVO [memberId=" + memberId + ", productNo=" + productNo + ", secondOptionNo=" + secondOptionNo
-				+ ", cartAmount=" + cartAmount + ", cartPrice=" + cartPrice + "]";
+		return "CartVO [no=" + no + ", memberId=" + memberId + ", productOptionNo=" + productOptionNo + ", cartAmount="
+				+ cartAmount + ", cartPrice=" + cartPrice + "]";
 	}
 	
 }

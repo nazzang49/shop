@@ -20,7 +20,6 @@ public class UserProductService {
 	//초기화
 	public void initTables() {
 		productTable.clear();
-		//5개의 상품 보유
 		productTable.add(1L);
 		productTable.add(2L);
 		productTable.add(3L);
@@ -36,7 +35,7 @@ public class UserProductService {
 		List<ImageVO> imageList = new ArrayList<>();
 		
 		//DB 입력 가정
-		productList.add(new ProductVO(1L, "반팔", 35000, "기능성 티셔츠", "Y", 1L, 1L));
+		productList.add(new ProductVO(1L, "반팔", 35000L, "기능성 티셔츠", "Y", 1L, 1L));
 		imageList.add(new ImageVO(1L, 1L, "/image/shop-uploads/test.png", "R","2018-10-01"));
 		
 		map.put("productList", productList);

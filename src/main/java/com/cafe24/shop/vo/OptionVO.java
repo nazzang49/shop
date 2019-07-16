@@ -1,19 +1,27 @@
 package com.cafe24.shop.vo;
 
-public class FirstOptionVO {
+import javax.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.NotEmpty;
+
+public class OptionVO {
 
 	private Long no;
+	@NotNull
 	private Long productNo;
+	@NotEmpty
 	private String name;
+	@NotNull
+	private Long depth;
 	
-	public FirstOptionVO() {
+	public OptionVO() {
 
 	}
 	
-	public FirstOptionVO(Long no, Long productNo, String name) {
+	public OptionVO(Long no, Long productNo, String name, Long depth) {
 		this.no=no;
 		this.productNo=productNo;
 		this.name=name;
+		this.depth=depth;
 	}
 	
 	public Long getNo() {
@@ -34,9 +42,16 @@ public class FirstOptionVO {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+	public Long getDepth() {
+		return depth;
+	}
+
+	public void setDepth(Long depth) {
+		this.depth = depth;
+	}
+
 	@Override
 	public String toString() {
-		return "FirstOptionVO [no=" + no + ", productNo=" + productNo + ", name=" + name + "]";
+		return "OptionVO [no=" + no + ", productNo=" + productNo + ", name=" + name + ", depth=" + depth + "]";
 	}
 }

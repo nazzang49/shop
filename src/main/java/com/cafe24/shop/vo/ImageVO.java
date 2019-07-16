@@ -1,5 +1,7 @@
 package com.cafe24.shop.vo;
 
+import javax.validation.constraints.NotNull;
+
 import org.hibernate.validator.constraints.NotEmpty;
 
 //일단, 기본 정보만 테스트
@@ -7,6 +9,7 @@ public class ImageVO {
 
 	private Long no;
 	//상품 번호
+	@NotNull
 	private Long productNo;
 	//이미지 경로
 	@NotEmpty

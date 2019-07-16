@@ -3,10 +3,18 @@ package com.cafe24.shop.controller.api;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import javax.validation.ConstraintViolation;
 import javax.validation.Valid;
+import javax.validation.Validation;
+import javax.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -16,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cafe24.shop.dto.JSONResult;
 import com.cafe24.shop.service.AdminOrderService;
+import com.cafe24.shop.vo.CategoryVO;
 import com.cafe24.shop.vo.OrderVO;
 
 import io.swagger.annotations.ApiImplicitParam;
@@ -28,10 +37,12 @@ import io.swagger.annotations.ApiOperation;
 public class AdminOrderController {
 
 	@Autowired
+	private MessageSource messageSource;
+	
+	@Autowired
 	private AdminOrderService adminOrderService;
 	
-	//주문  목록
-	//@Auth(role=Auth.Role.ADMIN)
+	//주문 목록
 	@ApiOperation(value="주문 목록")
 	@GetMapping(value="/list")
 	public JSONResult getList() {
@@ -50,21 +61,29 @@ public class AdminOrderController {
 	}
 	
 	//주문 상태 수정
-	//@Auth(role=Auth.Role.ADMIN)
 	@ApiImplicitParams({
 		@ApiImplicitParam(name="no", value="주문 번호", required=true, dataType="path", defaultValue=""),
 		@ApiImplicitParam(name="status", value="주문 상태", required=true, dataType="string", defaultValue="")
 	})
 	@ApiOperation(value="주문 상태 수정")
 	@PutMapping(value="/update/{no}")
-	public JSONResult udpate(@ModelAttribute @Valid OrderVO ovo,
-							 BindingResult br) {
+	public ResponseEntity<JSONResult> udpate(@ModelAttribute OrderVO ovo,
+							 				 BindingResult br) {
 		//관리자 인증
 		
 		
 		//valid
-		if(br.hasErrors()) {
-			return JSONResult.fail("입력 실패");
+		Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+		Set<ConstraintViolation<OrderVO>> validatorResults = validator.validateProperty(ovo, "status");
+		
+		if(!validatorResults.isEmpty()) {
+			for(ConstraintViolation<OrderVO> validatorResult : validatorResults) {
+				String msg = messageSource.getMessage("NotEmpty.ovo.status", null, LocaleContextHolder.getLocale());
+				JSONResult result = JSONResult.fail(msg);
+				//에러가 발생한 변수 확인
+				System.out.println(validatorResult.getPropertyPath());
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
+			}
 		}
 		
 		
@@ -74,7 +93,7 @@ public class AdminOrderController {
 		Map<String, Object> data = new HashMap<>();
 		data.put("flag", flag);
 		JSONResult result = JSONResult.success(data);
-		return result;
+		return ResponseEntity.status(HttpStatus.OK).body(result);
 	}
 	
 }

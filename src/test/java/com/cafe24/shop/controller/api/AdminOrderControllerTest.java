@@ -50,22 +50,48 @@ public class AdminOrderControllerTest {
 	
 	//주문 목록 >> 추후 검색 기능 추가 by ajax
 	@Test
-	public void testOrderListRead() throws Exception {
+	public void testAOrderListRead() throws Exception {
 		//test >> api
 		ResultActions resultActions = 
 				mockMvc.perform(get("/api/adminorder/list")
 						.contentType(MediaType.APPLICATION_JSON));
 		
 		resultActions
+		//list1
 		.andExpect(status().isOk()).andDo(print())
 		.andExpect(jsonPath("$.result", is("success")))
 		.andExpect(jsonPath("$.data.orderList[0].no", is(1)))
-		.andExpect(jsonPath("$.data.orderList[0].memberId", is("test")));
+		.andExpect(jsonPath("$.data.orderList[0].memberId", is("test")))
+		.andExpect(jsonPath("$.data.orderList[0].customerName", is("박진영")))
+		.andExpect(jsonPath("$.data.orderList[0].customerAddress", is("서울")))
+		.andExpect(jsonPath("$.data.orderList[0].customerPhone", is("010-1111-1111")))
+		.andExpect(jsonPath("$.data.orderList[0].customerEmail", is("test@naver.com")))
+		.andExpect(jsonPath("$.data.orderList[0].receiverName", is("박진수")))
+		.andExpect(jsonPath("$.data.orderList[0].receiverAddress", is("부산")))
+		.andExpect(jsonPath("$.data.orderList[0].receiverPhone", is("010-2222-2222")))
+		.andExpect(jsonPath("$.data.orderList[0].receiverMsg", is("부재 시 경비실")))
+		.andExpect(jsonPath("$.data.orderList[0].orderDate", is("2018-10-01")))
+		.andExpect(jsonPath("$.data.orderList[0].paymentPrice", is(60000)))
+		.andExpect(jsonPath("$.data.orderList[0].status", is("입금대기")))
+		//list2
+		.andExpect(jsonPath("$.data.orderList[1].no", is(2)))
+		.andExpect(jsonPath("$.data.orderList[1].memberId", is("test")))
+		.andExpect(jsonPath("$.data.orderList[1].customerName", is("박진성")))
+		.andExpect(jsonPath("$.data.orderList[1].customerAddress", is("서울")))
+		.andExpect(jsonPath("$.data.orderList[1].customerPhone", is("010-1111-1111")))
+		.andExpect(jsonPath("$.data.orderList[1].customerEmail", is("test@naver.com")))
+		.andExpect(jsonPath("$.data.orderList[1].receiverName", is("박우성")))
+		.andExpect(jsonPath("$.data.orderList[1].receiverAddress", is("부산")))
+		.andExpect(jsonPath("$.data.orderList[1].receiverPhone", is("010-2222-2222")))
+		.andExpect(jsonPath("$.data.orderList[1].receiverMsg", is("부재 시 경비실")))
+		.andExpect(jsonPath("$.data.orderList[1].orderDate", is("2018-10-01")))
+		.andExpect(jsonPath("$.data.orderList[1].paymentPrice", is(60000)))
+		.andExpect(jsonPath("$.data.orderList[1].status", is("입금대기")));
 	}
 	
-	//주문 상태 수정 >> 추후, 주문 로그 추가
+	//주문 상태 수정
 	@Test
-	public void testOrderUpdate() throws Exception {
+	public void testBOrderUpdate() throws Exception {
 		//test >> api
 		ResultActions resultActions = 
 				mockMvc.perform(put("/api/adminorder/update/{no}",1L)
@@ -78,8 +104,14 @@ public class AdminOrderControllerTest {
 		.andExpect(jsonPath("$.data.flag", is(true)));
 		
 		
-		//주문 로그 테스트(add)
-		
+		//invalidation in status = 주문상태 입력값 실패 케이스
+		resultActions = 
+				mockMvc.perform(put("/api/adminorder/update/{no}",1L)
+						.contentType(MediaType.APPLICATION_JSON));
+
+		resultActions
+		.andExpect(status().isBadRequest()).andDo(print())
+		.andExpect(jsonPath("$.result", is("fail")));		
 		
 	}
 	

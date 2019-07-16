@@ -11,23 +11,25 @@ public class ProductVO {
 	//상품 기본 정보
 	//pk
 	private Long no;
+	@NotNull
+	private Long categoryNo;
 	@NotEmpty
 	private String name;
 	@NotNull
 	@Min(0)
-	private int price;
+	private Long price;
+	@NotEmpty
 	private String shortDescription;
+	@NotEmpty
 	private String alignUse;
+	@NotNull
 	private Long alignNo;
-	
-	//상품별 카테고리 정보 >> 조인 실시
-	private Long categoryNo;
 	
 	public ProductVO() {
 		
 	}
 	
-	public ProductVO(Long no, String name, int price, String shortDescription, String alignUse, Long alignNo, Long categoryNo) {
+	public ProductVO(Long no, String name, Long price, String shortDescription, String alignUse, Long alignNo, Long categoryNo) {
 		
 		this.no=no;
 		this.name=name;
@@ -50,10 +52,10 @@ public class ProductVO {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public int getPrice() {
+	public Long getPrice() {
 		return price;
 	}
-	public void setPrice(int price) {
+	public void setPrice(Long price) {
 		this.price = price;
 	}
 	public String getShortDescription() {
@@ -83,7 +85,7 @@ public class ProductVO {
 
 	@Override
 	public String toString() {
-		return "ProductVO [no=" + no + ", name=" + name + ", price=" + price + ", shortDescription=" + shortDescription
-				+ ", alignUse=" + alignUse + ", alignNo=" + alignNo + ", categoryNo=" + categoryNo + "]";
+		return "ProductVO [no=" + no + ", categoryNo=" + categoryNo + ", name=" + name + ", price=" + price
+				+ ", shortDescription=" + shortDescription + ", alignUse=" + alignUse + ", alignNo=" + alignNo + "]";
 	}
 }

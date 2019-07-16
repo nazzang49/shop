@@ -13,8 +13,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
@@ -33,6 +35,7 @@ import com.google.gson.Gson;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes= {AppConfig.class, TestWebConfig.class})
 @WebAppConfiguration
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class AdminCategoryControllerTest {
 
 	private MockMvc mockMvc;
@@ -52,7 +55,7 @@ public class AdminCategoryControllerTest {
 	
 	//카테고리 목록
 	@Test
-	public void testACategoryListRead() throws Exception {
+	public void testBCategoryListRead() throws Exception {
 		//test >> api
 		ResultActions resultActions = 
 				mockMvc.perform(get("/api/admincategory/list").contentType(MediaType.APPLICATION_JSON));
@@ -61,22 +64,34 @@ public class AdminCategoryControllerTest {
 		.andExpect(status().isOk()).andDo(print())
 		.andExpect(jsonPath("$.result", is("success")))
 		.andExpect(jsonPath("$.data.categoryList[0].no", is(1)))
-		.andExpect(jsonPath("$.data.categoryList[0].name", is("category1")));
+		.andExpect(jsonPath("$.data.categoryList[0].name", is("categoryTest1")));
+
 	}
 	
 	//카테고리 추가
 	@Test
-	public void testBCategoryWrite() throws Exception {
+	public void testACategoryWrite() throws Exception {
 		//test >> api
 		ResultActions resultActions = 
 				mockMvc.perform(post("/api/admincategory/add")
 						.param("name", "categoryTest1")
+						.param("groupNo", "1")
+						.param("depth", "1")
 						.contentType(MediaType.APPLICATION_JSON));
 
 		resultActions
 		.andExpect(status().isOk()).andDo(print())
 		.andExpect(jsonPath("$.result", is("success")))
 		.andExpect(jsonPath("$.data.flag", is(true)));
+		
+		//invalidation in name = 이름 입력값 실패 케이스
+		resultActions = 
+				mockMvc.perform(post("/api/admincategory/add")
+						.contentType(MediaType.APPLICATION_JSON));
+
+		resultActions
+		.andExpect(status().isBadRequest()).andDo(print())
+		.andExpect(jsonPath("$.result", is("fail")));
 	}
 	
 	//카테고리 수정
@@ -92,6 +107,15 @@ public class AdminCategoryControllerTest {
 		.andExpect(status().isOk()).andDo(print())
 		.andExpect(jsonPath("$.result", is("success")))
 		.andExpect(jsonPath("$.data.flag", is(true)));
+		
+		//invalidation in name = 이름 입력값 실패 케이스
+		resultActions = 
+				mockMvc.perform(put("/api/admincategory/update/{no}",1L)
+						.contentType(MediaType.APPLICATION_JSON));
+
+		resultActions
+		.andExpect(status().isBadRequest()).andDo(print())
+		.andExpect(jsonPath("$.result", is("fail")));
 	}
 	
 	//카테고리 삭제
