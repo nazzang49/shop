@@ -1,6 +1,5 @@
 package com.cafe24.shop.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,6 @@ public class AdminCategoryService {
 	@Autowired
 	private CategoryDAO cateogryDao;
 	
-	//test by 하드코딩
 	//카테고리 목록
 	public List<CategoryVO> 카테고리목록() {
 		return cateogryDao.selectAll();
@@ -33,8 +31,8 @@ public class AdminCategoryService {
 	}
 	
 	//카테고리 삭제
-	public boolean 카테고리삭제(Long no) {
-		return cateogryDao.delete(no);
+	public boolean 카테고리삭제(CategoryVO categoryVO) {
+		return cateogryDao.delete(categoryVO);
 	}
 	
 }

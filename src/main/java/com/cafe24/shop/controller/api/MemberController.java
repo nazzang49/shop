@@ -18,6 +18,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,6 +36,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
+//회원
 @RequestMapping("/api/member")
 @RestController("memberAPIController")
 public class MemberController {
@@ -44,10 +47,9 @@ public class MemberController {
 	@Autowired
 	private MemberService memberService;
 	
-	//조인 >> 회원 role = USER / 관리자 role = ADMIN
 	@ApiOperation(value="조인")
 	@PostMapping(value="/join")
-	public ResponseEntity<JSONResult> join(@ModelAttribute @Valid MemberVO mvo,
+	public ResponseEntity<JSONResult> join(@ModelAttribute @Valid MemberVO memberVO,
 						   				   BindingResult br) {
 		
 		//valid
@@ -60,7 +62,7 @@ public class MemberController {
 			}
 		}
 		
-		boolean flag = memberService.조인(mvo);
+		boolean flag = memberService.조인(memberVO);
 		
 		Map<String, Object> data = new HashMap<>();
 		data.put("flag", flag);
@@ -68,14 +70,12 @@ public class MemberController {
 		return ResponseEntity.status(HttpStatus.OK).body(result);
 	}
 	
-	//아이디 중복 체크
 	@ApiOperation(value="아이디 중복 체크")
 	@PostMapping(value="/checkid")
 	public JSONResult checkid(@ModelAttribute MemberVO memberVO) {
 		
 		boolean flag = memberService.아이디중복체크(memberVO);
-		
-		
+				
 		//리턴 데이터
 		Map<String, Object> data = new HashMap<>();
 		data.put("flag", flag);
@@ -83,24 +83,22 @@ public class MemberController {
 		return result;
 	}
 	
-	//로그인
 	@ApiOperation(value="로그인")
 	@PostMapping(value="/login")
-	public ResponseEntity<JSONResult> login(@ModelAttribute MemberVO mvo) {
+	public ResponseEntity<JSONResult> login(@ModelAttribute MemberVO memberVO) {
 		
 		//valid
 		Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-		Set<ConstraintViolation<MemberVO>> validatorResults = validator.validateProperty(mvo, "id");
-		validatorResults.addAll(validator.validateProperty(mvo, "password"));
+		Set<ConstraintViolation<MemberVO>> validatorResults = validator.validateProperty(memberVO, "id");
+		validatorResults.addAll(validator.validateProperty(memberVO, "password"));
 		if(!validatorResults.isEmpty()) {
 			String msg = "";
 			for(ConstraintViolation<MemberVO> validatorResult : validatorResults) {
 				if("id".equals(validatorResult.getPropertyPath().toString())) {
-					msg = messageSource.getMessage("NotEmpty.mvo.id", null, LocaleContextHolder.getLocale());
+					msg = messageSource.getMessage("NotEmpty.memberVO.id", null, LocaleContextHolder.getLocale());
 					break;
 				}else if("password".equals(validatorResult.getPropertyPath().toString())) {
-					//비밀번호 >> 공백, 길이 동시 검사
-					msg = messageSource.getMessage("NotEmpty.mvo.password", null, LocaleContextHolder.getLocale());
+					msg = messageSource.getMessage("NotEmpty.memberVO.password", null, LocaleContextHolder.getLocale());
 					break;
 				}
 			}
@@ -108,7 +106,7 @@ public class MemberController {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
 		}
 		
-		boolean flag = memberService.로그인(mvo);
+		boolean flag = memberService.로그인(memberVO);
 		
 		//리턴 데이터
 		Map<String, Object> data = new HashMap<>();
@@ -117,29 +115,24 @@ public class MemberController {
 		return ResponseEntity.status(HttpStatus.OK).body(result);
 	}
 	
-	//회원조회
 	@ApiOperation(value="회원조회")
-	@RequestMapping(value="/{id}", method=RequestMethod.GET)
+	@GetMapping(value="/{id}")
 	public JSONResult get(@ModelAttribute MemberVO memberVO) {
 		
 		//본인 인증
 		
-		
-		System.out.println("pathvariable >> memberVO : "+memberVO.getId());
-		
-		MemberVO mvo = memberService.회원조회(memberVO);
+		memberVO = memberService.회원조회(memberVO);
 		
 		//리턴 데이터
 		Map<String, Object> data = new HashMap<>();
-		data.put("mvo", mvo);
+		data.put("memberVO", memberVO);
 		JSONResult result = JSONResult.success(data);
 		return result;
 	}
 	
-	//회원수정
 	@ApiOperation(value="회원수정")
 	@PutMapping(value="/update")
-	public ResponseEntity<JSONResult> update(@ModelAttribute @Valid MemberVO mvo,
+	public ResponseEntity<JSONResult> update(@ModelAttribute @Valid MemberVO memberVO,
 											 BindingResult br) {
 		
 		//본인 인증
@@ -155,7 +148,7 @@ public class MemberController {
 		}
 		
 		//리턴 데이터
-		boolean flag = memberService.회원수정(mvo);
+		boolean flag = memberService.회원수정(memberVO);
 		
 		Map<String, Object> data = new HashMap<>();
 		data.put("flag", flag);
@@ -164,8 +157,10 @@ public class MemberController {
 	}
 	
 	@ApiOperation(value="회원탈퇴")
-	@RequestMapping(value="/delete/{id}", method=RequestMethod.DELETE)
+	@DeleteMapping(value="/delete/{id}")
 	public JSONResult delete(@ModelAttribute MemberVO memberVO) {
+		
+		//비밀번호 valid
 		
 		//본인 인증
 		

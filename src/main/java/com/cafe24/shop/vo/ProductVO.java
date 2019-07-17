@@ -22,7 +22,6 @@ public class ProductVO {
 	private String shortDescription;
 	@NotEmpty
 	private String alignUse;
-	@NotNull
 	private Long alignNo;
 	
 	public ProductVO() {

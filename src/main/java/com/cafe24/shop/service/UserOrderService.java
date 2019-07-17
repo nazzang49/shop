@@ -6,8 +6,10 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.cafe24.shop.vo.CartVO;
+import com.cafe24.shop.vo.OrderDetailVO;
+import com.cafe24.shop.vo.OrderVO;
 
-//(고객) 주문 서비스
+//(회원) 주문 서비스
 @Service
 public class UserOrderService {
 
@@ -35,7 +37,7 @@ public class UserOrderService {
 	}
 	
 	//test by 하드코딩
-	//장바구니 담기
+	//장바구니 추가
 	public boolean 장바구니추가(CartVO cvo) {
 		initTables();
 		if(cvo!=null) {
@@ -45,18 +47,32 @@ public class UserOrderService {
 	}
 	
 	//test by 하드코딩
-	//장바구니 조회
-	public List<String> 장바구니조회(String memberId) {
-		initTables();
-		List<String> categoryList = new ArrayList<>();
+	//장바구니 목록
+	public List<String> 장바구니목록(CartVO cvo) {
+		return null;
+	}
+	
+	//장바구니수량수정
+	public boolean 장바구니수량수정(CartVO cvo) {
+		return true;
+	}
+	
+	//장바구니삭제
+	public boolean 장바구니삭제(CartVO cvo) {
+		return true;
+	}
+	
+	//주문 추가
+	public boolean 주문추가(OrderVO orderVO) {
+		//1. 장바구니 정보 조회
+		List<Long> cartNoList = orderVO.getCartNoList();
 		
-		//현재 고객 장바구니 리스트
-		if(memberId!=null) {
-			if(cartTable.contains(memberId)) {
-				categoryList.add(memberId);
-			}
-		}
-		return categoryList;
+		return true;
+	}
+	
+	//주문 목록 by 회원 아이디
+	public List<OrderDetailVO> 주문상세(OrderVO orderVO) {
+		return null;
 	}
 	
 }

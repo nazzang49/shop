@@ -12,16 +12,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.cafe24.shop.config.AppConfig;
@@ -31,6 +35,9 @@ import com.cafe24.shop.config.TestWebConfig;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes= {AppConfig.class, TestWebConfig.class})
 @WebAppConfiguration
+@Transactional
+@Rollback(true)
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class AdminOrderControllerTest {
 
 	private MockMvc mockMvc;
@@ -48,12 +55,12 @@ public class AdminOrderControllerTest {
 		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 	}
 	
-	//주문 목록 >> 추후 검색 기능 추가 by ajax
+	//주문 목록
 	@Test
 	public void testAOrderListRead() throws Exception {
 		//test >> api
 		ResultActions resultActions = 
-				mockMvc.perform(get("/api/adminorder/list")
+				mockMvc.perform(get("/api/admin/order/list")
 						.contentType(MediaType.APPLICATION_JSON));
 		
 		resultActions
@@ -94,7 +101,7 @@ public class AdminOrderControllerTest {
 	public void testBOrderUpdate() throws Exception {
 		//test >> api
 		ResultActions resultActions = 
-				mockMvc.perform(put("/api/adminorder/update/{no}",1L)
+				mockMvc.perform(put("/api/admin/order/update/{no}",1L)
 						.param("status", "입금완료")
 						.contentType(MediaType.APPLICATION_JSON));
 

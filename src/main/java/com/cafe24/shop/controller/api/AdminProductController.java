@@ -43,8 +43,8 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
 //(관리자) 상품 컨트롤러
-@RequestMapping("/api/adminproduct")
-@RestController("adminproductAPIController")
+@RequestMapping("/api/admin/product")
+@RestController("adminProductAPIController")
 public class AdminProductController {
 
 	@Autowired
@@ -59,16 +59,14 @@ public class AdminProductController {
 	@Autowired
 	private AdminOptionService adminOptionService;
 	
-	//상품 목록
 	@ApiOperation(value="상품 목록")
-	@GetMapping(value="/list")
-	public JSONResult getList() {
-		
+	@GetMapping(value="/list/{categoryNo}")
+	public JSONResult getProductList(@ModelAttribute ProductVO productVO) {
 		
 		//관리자 인증
+	
+		List<ProductVO> productList = adminProductService.상품목록(productVO);
 		
-		
-		List<ProductVO> productList = adminProductService.상품목록();
 		
 		//리턴 데이터
 		Map<String, Object> data = new HashMap<>();
@@ -77,19 +75,12 @@ public class AdminProductController {
 		return result;
 	}
 	
-	//상품 추가
-	@ApiImplicitParams({
-		@ApiImplicitParam(name="name", value="상품명", required=true, dataType="string", defaultValue=""),
-		@ApiImplicitParam(name="categoryNo", value="카테고리 번호", required=true, dataType="string", defaultValue=""),
-		@ApiImplicitParam(name="price", value="상품가격", required=true, dataType="string", defaultValue=""),
-		@ApiImplicitParam(name="shortDescription", value="상품간단설명", required=true, dataType="string", defaultValue=""),
-		@ApiImplicitParam(name="alignUse", value="진열구분", required=true, dataType="string", defaultValue=""),
-		@ApiImplicitParam(name="alignNo", value="진열순서", required=true, dataType="string", defaultValue="")
-	})
 	@ApiOperation(value="상품 추가")
 	@PostMapping(value="/add")
-	public ResponseEntity<JSONResult> add(@ModelAttribute @Valid ProductVO pvo,
-						  				  BindingResult br) {
+	public ResponseEntity<JSONResult> productAdd(@ModelAttribute @Valid ProductVO productVO,
+						  				  		 BindingResult br) {
+		
+		//관리자 인증
 		
 		//valid
 		if(br.hasErrors()) {
@@ -100,61 +91,55 @@ public class AdminProductController {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);	
 			}
 		}
-				
+			
+		//진열번호 >> 동일 카테고리 기준
+		Long alignNo = adminProductService.진열번호(productVO);
+		alignNo++;
+		productVO.setAlignNo(alignNo);
 		
-		//관리자 인증
-		
-		
-		boolean flag = adminProductService.상품추가(pvo);
+		//상품 추가 성공 >> 상품 번호 리턴
+		Long productNo = adminProductService.상품추가(productVO);
 		
 		//리턴 데이터
 		Map<String, Object> data = new HashMap<>();
-		data.put("flag", flag);
+		data.put("productNo", productNo);
 		JSONResult result = JSONResult.success(data);
 		return ResponseEntity.status(HttpStatus.OK).body(result);
 	}
 	
-	//상품 수정 >> 상품명, 상품가격
-	@ApiImplicitParams({
-		@ApiImplicitParam(name="name", value="상품명", required=true, dataType="string", defaultValue=""),
-		@ApiImplicitParam(name="price", value="상품가격", required=true, dataType="string", defaultValue=""),
-		@ApiImplicitParam(name="shortDescription", value="상품간단설명", required=true, dataType="string", defaultValue=""),
-		@ApiImplicitParam(name="alignUse", value="진열구분", required=true, dataType="string", defaultValue=""),
-		@ApiImplicitParam(name="alignNo", value="진열순서", required=true, dataType="string", defaultValue="")
-	})
 	@ApiOperation(value="상품 수정")
 	@PutMapping(value="/update/{no}")
-	public ResponseEntity<JSONResult> udpate(@ModelAttribute @Valid ProductVO pvo,
-							 				 BindingResult br) {
+	public ResponseEntity<JSONResult> productUpdate(@ModelAttribute @Valid ProductVO productVO,
+							 				 		BindingResult br) {
+		
 		//관리자 인증
 		
 		
 		//valid
 		Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-		Set<ConstraintViolation<ProductVO>> validatorResults = validator.validateProperty(pvo, "name");
-		//카테고리 번호 수정 제외
-		validatorResults.addAll(validator.validateProperty(pvo, "price"));
-		validatorResults.addAll(validator.validateProperty(pvo, "shortDescription"));
-		validatorResults.addAll(validator.validateProperty(pvo, "alignUse"));
-		validatorResults.addAll(validator.validateProperty(pvo, "alignNo"));
+		Set<ConstraintViolation<ProductVO>> validatorResults = validator.validateProperty(productVO, "name");
+		validatorResults.addAll(validator.validateProperty(productVO, "categoryNo"));
+		validatorResults.addAll(validator.validateProperty(productVO, "price"));
+		validatorResults.addAll(validator.validateProperty(productVO, "shortDescription"));
+		validatorResults.addAll(validator.validateProperty(productVO, "alignUse"));
 		
 		if(!validatorResults.isEmpty()) {
 			String msg = "";
 			for(ConstraintViolation<ProductVO> validatorResult : validatorResults) {
 				if("name".equals(validatorResult.getPropertyPath().toString())) {
-					msg = messageSource.getMessage("NotEmpty.pvo.name", null, LocaleContextHolder.getLocale());
+					msg = messageSource.getMessage("NotEmpty.productVO.name", null, LocaleContextHolder.getLocale());
 					break;
 				}else if("price".equals(validatorResult.getPropertyPath().toString())) {
-					msg = messageSource.getMessage("NotNull.pvo.price", null, LocaleContextHolder.getLocale());
+					msg = messageSource.getMessage("NotNull.productVO.price", null, LocaleContextHolder.getLocale());
 					break;
 				}else if("shortDescription".equals(validatorResult.getPropertyPath().toString())) {
-					msg = messageSource.getMessage("NotEmpty.pvo.shortDescription", null, LocaleContextHolder.getLocale());
+					msg = messageSource.getMessage("NotEmpty.productVO.shortDescription", null, LocaleContextHolder.getLocale());
 					break;
 				}else if("alignUse".equals(validatorResult.getPropertyPath().toString())) {
-					msg = messageSource.getMessage("NotEmpty.pvo.alignUse", null, LocaleContextHolder.getLocale());
+					msg = messageSource.getMessage("NotEmpty.productVO.alignUse", null, LocaleContextHolder.getLocale());
 					break;
 				}else {
-					msg = messageSource.getMessage("NotNull.pvo.alignNo", null, LocaleContextHolder.getLocale());
+					msg = messageSource.getMessage("NotNull.productVO.categoryNo", null, LocaleContextHolder.getLocale());
 					break;
 				}
 				
@@ -164,26 +149,29 @@ public class AdminProductController {
 		}
 		
 	
-		List<ProductVO> productList = adminProductService.상품수정(pvo);
+		boolean flag = adminProductService.상품수정(productVO);
 	
 		//리턴 데이터
 		Map<String, Object> data = new HashMap<>();
-		data.put("productList", productList);
+		data.put("flag", flag);
 		JSONResult result = JSONResult.success(data);
 		return ResponseEntity.status(HttpStatus.OK).body(result);	
 	}
 	
-	//상품 삭제
-	@ApiImplicitParams({
-		@ApiImplicitParam(name="no", value="상품 번호", required=true, dataType="path", defaultValue="")
-	})
 	@ApiOperation(value="상품 삭제")
 	@DeleteMapping(value="/delete/{no}")
-	public JSONResult delete(@PathVariable(value="no") Long no) {
+	public JSONResult productDelete(@ModelAttribute @Valid ProductVO productVO) {
+		
 		//관리자 인증
 		
 		
-		boolean flag = adminProductService.상품삭제(no);
+		boolean flag = adminProductService.상품삭제(productVO);
+		
+		//이미지 삭제
+		
+		//옵션 삭제
+		
+		//상품옵션 삭제
 		
 		//리턴 데이터
 		Map<String, Object> data = new HashMap<>();
@@ -192,54 +180,40 @@ public class AdminProductController {
 		return result;
 	}
 	
-	//이미지  추가
-	@ApiImplicitParams({
-		@ApiImplicitParam(name="no", value="이미지 번호", required=true, dataType="string", defaultValue=""),
-		@ApiImplicitParam(name="productNo", value="상품 번호", required=true, dataType="string", defaultValue=""),
-		@ApiImplicitParam(name="url", value="이미지 url", required=true, dataType="string", defaultValue=""),
-		@ApiImplicitParam(name="repOrBasic", value="이미지 구분", required=true, dataType="string", defaultValue="")
-	})
 	@ApiOperation(value="이미지 추가")
 	@PostMapping(value="image/add")
-	public ResponseEntity<JSONResult> imageAdd(@ModelAttribute @Valid ImageVO ivo,
+	public ResponseEntity<JSONResult> imageAdd(@ModelAttribute @Valid ImageVO imageVO,
 						  	   		  		   BindingResult br) {
+
+		//관리자 인증
 		
 		//valid
 		if(br.hasErrors()) {
 			List<ObjectError> errorList = br.getAllErrors();
 			for(ObjectError error : errorList) {
 				String msg = error.getDefaultMessage();
-				//fail >> 에러 메시지 전송
 				JSONResult result = JSONResult.fail(msg);
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);	
 			}
 		}
 				
-		
-		//관리자 인증
-		
-		
-		List<ImageVO> imageList = adminImageService.이미지추가(ivo);
+		boolean flag = adminImageService.이미지추가(imageVO);
 		
 		//리턴 데이터
 		Map<String, Object> data = new HashMap<>();
-		data.put("imageList", imageList);
+		data.put("flag", flag);
 		JSONResult result = JSONResult.success(data);
-		//success >> 데이터 전송
 		return ResponseEntity.status(HttpStatus.OK).body(result);
 	}
 	
-	//이미지 삭제
-	@ApiImplicitParams({
-		@ApiImplicitParam(name="no", value="이미지 번호", required=true, dataType="path", defaultValue="")
-	})
 	@ApiOperation(value="이미지 삭제")
 	@DeleteMapping(value="image/delete/{no}")
-	public JSONResult imageDelete(@PathVariable(value="no") Long no) {
+	public JSONResult imageDelete(@ModelAttribute @Valid ImageVO imageVO) {
+		
 		//관리자 인증
 		
 		
-		boolean flag = adminImageService.이미지삭제(no);
+		boolean flag = adminImageService.이미지삭제(imageVO);
 		
 		//리턴 데이터
 		Map<String, Object> data = new HashMap<>();
@@ -248,16 +222,12 @@ public class AdminProductController {
 		return result;
 	}
 	
-	//옵션 추가
-	@ApiImplicitParams({
-		@ApiImplicitParam(name="productNo", value="상품 번호", required=true, dataType="string", defaultValue=""),
-		@ApiImplicitParam(name="name", value="옵션 이름", required=true, dataType="string", defaultValue=""),
-		@ApiImplicitParam(name="depth", value="옵션 깊이", required=true, dataType="string", defaultValue="")
-	})
 	@ApiOperation(value="옵션 추가")
 	@PostMapping(value="option/add")
-	public ResponseEntity<JSONResult> OptionAdd(@ModelAttribute @Valid OptionVO fvo,
+	public ResponseEntity<JSONResult> OptionAdd(@ModelAttribute @Valid OptionVO optionVO,
 						  			 			BindingResult br) {
+		
+		//관리자 인증
 		
 		//valid
 		if(br.hasErrors()) {
@@ -268,12 +238,8 @@ public class AdminProductController {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);	
 			}
 		}
-				
 		
-		//관리자 인증
-		
-		
-		List<OptionVO> optionList = adminOptionService.옵션추가(fvo);
+		List<OptionVO> optionList = adminOptionService.옵션추가(optionVO);
 		
 		//리턴 데이터
 		Map<String, Object> data = new HashMap<>();
@@ -283,16 +249,13 @@ public class AdminProductController {
 	}
 	
 	//옵션 삭제
-	@ApiImplicitParams({
-		@ApiImplicitParam(name="no", value="옵션 번호", required=true, dataType="string", defaultValue="")
-	})
 	@ApiOperation(value="옵션 삭제")
 	@DeleteMapping(value="option/delete/{no}")
-	public JSONResult optionDelete(@PathVariable(value="no") Long no) {
+	public JSONResult optionDelete(@ModelAttribute @Valid OptionVO optionVO) {
+		
 		//관리자 인증
 		
-		
-		boolean flag = adminOptionService.옵션삭제(no);
+		boolean flag = adminOptionService.옵션삭제(optionVO);
 		
 		//리턴 데이터
 		Map<String, Object> data = new HashMap<>();

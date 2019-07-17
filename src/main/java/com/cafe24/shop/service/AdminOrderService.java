@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.cafe24.shop.vo.OrderVO;
 
+//(관리자) 주문 서비스
 @Service
 public class AdminOrderService {
 

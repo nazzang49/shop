@@ -14,6 +14,7 @@ public class MemberDAO {
 	@Autowired
 	private SqlSession sqlSession;
 	
+	//암복호화 키값
 	private final String keyValue = "shop-keyValue";
 	
 	//아이디 중복 체크
@@ -51,17 +52,6 @@ public class MemberDAO {
 		return sqlSession.delete("member.delete", memberVO)==1;
 	}
 	
-//	
-//	public MemberVO get(Long no) {
-//		MemberVO vo = sqlSession.selectOne("user.getByNo",no);
-//		return vo;
-//	}
-//	
-//	public MemberVO get(String email) {
-//		MemberVO vo = sqlSession.selectOne("user.getByEmail",email);
-//		return vo;
-//	}
-//	
 	//로그인하는 사용자의 세션값 저장을 위한 정보 추출
 	public MemberVO get(String email, String pw) {
 		Map<String, String> map = new HashMap<>();

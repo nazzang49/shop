@@ -1,47 +1,38 @@
 package com.cafe24.shop.service;
 
-import java.util.ArrayList;
 import java.util.List;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import com.cafe24.shop.repository.ImageDAO;
 import com.cafe24.shop.vo.ImageVO;
+import com.cafe24.shop.vo.ProductVO;
 
 //(관리자) 이미지 서비스
 @Service
 public class AdminImageService {
 
-	//상품 DB
-	private static List<ImageVO> imageTable = new ArrayList<>();
+	@Autowired
+	private ImageDAO imageDao;
 	
-	//DB 초기화
-	public void initTables() {
-		imageTable.clear();
-		imageTable.add(new ImageVO(1L, 1L, "/image/shop-uploads/test.png", "R", "2018-10-01"));
-		imageTable.add(new ImageVO(2L, 1L, "/image/shop-uploads/test.png", "B", "2018-10-01"));
+	//이미지 추가
+	public boolean 이미지추가(ImageVO imageVO) {
+		//여러개일 경우, for문으로 쿼리 실행 반복
+		return imageDao.insert(imageVO);
 	}
 	
-	//test by 하드코딩
-	//이미지 추가 >> 추가 확인
-	public List<ImageVO> 이미지추가(ImageVO ivo) {
-		initTables();
-		if(ivo!=null) {
-			imageTable.add(ivo);
-			return imageTable;
-		}
-		return imageTable;
+	//이미지 삭제
+	public boolean 이미지삭제(ImageVO imageVO) {
+		return imageDao.delete(imageVO);
 	}
 	
-	//test by 하드코딩
-	//이미지 추가 >> 추가 확인
-	public boolean 이미지삭제(Long no) {
-		initTables();
-		if(no!=null) {
-			for(ImageVO tvo : imageTable) {
-				if(tvo.getNo()==no) return true;
-			}
-		}
-		return false;
+	//메인 상품 썸네일 목록 >> 비진열 포함
+	public List<ImageVO> 썸네일() {
+		return imageDao.selectAllThumbnail();
+	}
+	
+	//특정 카테고리 내 상품 썸네일 목록 >> 비진열 포함
+	public List<ImageVO> 썸네일(ProductVO productVO) {
+		return imageDao.selectAllThumbnailByCategoryNo(productVO);
 	}
 	
 }

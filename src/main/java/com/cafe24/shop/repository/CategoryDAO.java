@@ -32,8 +32,8 @@ public class CategoryDAO {
 	}
 	
 	//카테고리 삭제
-	public boolean delete(Long no) {
-		return sqlSession.delete("category.delete", no)==1;
+	public boolean delete(CategoryVO categoryVO) {
+		return sqlSession.delete("category.delete", categoryVO)==1;
 	}
 
 }

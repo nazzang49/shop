@@ -28,12 +28,8 @@ public class AdminUserService {
 	
 	//test by 하드코딩
 	//회원 삭제
-	public boolean 회원삭제(String id) {
-		initTables();
-		for(MemberVO tvo : memberTable) {
-			if(tvo.getId().equals(id)) return true;
-		}
-		return false;
+	public boolean 회원삭제(MemberVO memberVO) {
+		return true;
 	}
 	
 }

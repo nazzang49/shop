@@ -37,8 +37,8 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
 //(관리자) 카테고리 컨트롤러
-@RequestMapping("/api/admincategory")
-@RestController("admincategoryAPIController")
+@RequestMapping("/api/admin/category")
+@RestController("adminCategoryAPIController")
 public class AdminCategoryController {
 
 	@Autowired
@@ -47,14 +47,11 @@ public class AdminCategoryController {
 	@Autowired
 	private AdminCategoryService adminCategoryService;
 	
-	//카테고리 목록
 	@ApiOperation(value="카테고리 목록")
 	@GetMapping(value="/list")
 	public JSONResult getList() {
 		
-		
 		//관리자 인증
-		
 		
 		List<CategoryVO> categoryList = adminCategoryService.카테고리목록();
 		
@@ -65,16 +62,12 @@ public class AdminCategoryController {
 		return result;
 	}
 	
-	//카테고리 추가
-	@ApiImplicitParams({
-		@ApiImplicitParam(name="name", value="카테고리 이름", required=true, dataType="string", defaultValue=""),
-		@ApiImplicitParam(name="groupNo", value="그룹 번호", required=true, dataType="string", defaultValue=""),
-		@ApiImplicitParam(name="depth", value="깊이", required=true, dataType="string", defaultValue="")
-	})
 	@ApiOperation(value="카테고리 추가")
 	@PostMapping(value="/add")
-	public ResponseEntity<JSONResult> add(@ModelAttribute @Valid CategoryVO cvo,
+	public ResponseEntity<JSONResult> add(@ModelAttribute @Valid CategoryVO categoryVO,
 						  				  BindingResult br) {
+		
+		//관리자 인증
 		
 		//valid
 		if(br.hasErrors()) {
@@ -85,12 +78,8 @@ public class AdminCategoryController {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);	
 			}
 		}
-				
-		
-		//관리자 인증
-		
-		
-		boolean flag = adminCategoryService.카테고리추가(cvo);
+			
+		boolean flag = adminCategoryService.카테고리추가(categoryVO);
 		
 		//리턴 데이터
 		Map<String, Object> data = new HashMap<>();
@@ -99,34 +88,27 @@ public class AdminCategoryController {
 		return ResponseEntity.status(HttpStatus.OK).body(result);
 	}
 	
-	//카테고리 수정
-	@ApiImplicitParams({
-		@ApiImplicitParam(name="no", value="카테고리 번호", required=true, dataType="path", defaultValue=""),
-		@ApiImplicitParam(name="name", value="카테고리 이름", required=true, dataType="string", defaultValue="")
-	})
 	@ApiOperation(value="카테고리 수정")
 	@PutMapping(value="/update/{no}")
-	public ResponseEntity<JSONResult> udpate(@ModelAttribute CategoryVO cvo,
+	public ResponseEntity<JSONResult> udpate(@ModelAttribute CategoryVO categoryVO,
 							 				 BindingResult br) {
 		//관리자 인증
 		
 		
 		//valid >> 아이디, 비밀번호 2개 입력값 >> MemberVO에서 로그인 시 필요하지 않은 데이터 별도 처리 필요 or 에러 발생
 		Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-		Set<ConstraintViolation<CategoryVO>> validatorResults = validator.validateProperty(cvo, "name");
+		Set<ConstraintViolation<CategoryVO>> validatorResults = validator.validateProperty(categoryVO, "name");
 		
 		if(!validatorResults.isEmpty()) {
 			for(ConstraintViolation<CategoryVO> validatorResult : validatorResults) {
-				String msg = messageSource.getMessage("NotEmpty.cvo.name", null, LocaleContextHolder.getLocale());
+				String msg = messageSource.getMessage("NotEmpty.categoryVO.name", null, LocaleContextHolder.getLocale());
 				JSONResult result = JSONResult.fail(msg);
-				//에러가 발생한 변수 확인
-				System.out.println(validatorResult.getPropertyPath());
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
 			}
 		}
 		
 		
-		boolean flag = adminCategoryService.카테고리수정(cvo);
+		boolean flag = adminCategoryService.카테고리수정(categoryVO);
 	
 		//리턴 데이터
 		Map<String, Object> data = new HashMap<>();
@@ -135,17 +117,13 @@ public class AdminCategoryController {
 		return ResponseEntity.status(HttpStatus.OK).body(result);
 	}
 	
-	//카테고리 삭제
-	@ApiImplicitParams({
-		@ApiImplicitParam(name="no", value="카테고리 번호", required=true, dataType="path", defaultValue="")
-	})
 	@ApiOperation(value="카테고리 삭제")
 	@DeleteMapping(value="/delete/{no}")
-	public JSONResult delete(@PathVariable(value="no") Long no) {
+	public JSONResult delete(@ModelAttribute CategoryVO categoryVO) {
+		
 		//관리자 인증
 		
-		
-		boolean flag = adminCategoryService.카테고리삭제(no);
+		boolean flag = adminCategoryService.카테고리삭제(categoryVO);
 		
 		//리턴 데이터
 		Map<String, Object> data = new HashMap<>();

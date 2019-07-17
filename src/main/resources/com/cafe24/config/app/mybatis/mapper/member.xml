@@ -13,7 +13,7 @@
 	</select>
 
 	<!-- 조인 -->
-	<!-- 개인정보 >> 암호화 -->
+	<!-- 개인정보 암호화 -->
 	<insert id="insert" parameterType="membervo">
 	<![CDATA[
 		insert into member
@@ -29,7 +29,7 @@
 	]]>
 	</insert>
 	
-	<!-- 로그인 >> 복호화 후, 문자열 변환 -->
+	<!-- 로그인 >> 복호화 후, 문자열 캐스팅 -->
 	<select id="selectByIdAndPassword" parameterType="membervo" resultType="membervo">
 	<![CDATA[
 		select

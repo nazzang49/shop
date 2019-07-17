@@ -12,16 +12,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.cafe24.shop.config.AppConfig;
@@ -31,6 +35,9 @@ import com.cafe24.shop.config.TestWebConfig;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes= {AppConfig.class, TestWebConfig.class})
 @WebAppConfiguration
+@Transactional
+@Rollback(true)
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class AdminProductControllerTest {
 
 	private MockMvc mockMvc;
@@ -48,18 +55,18 @@ public class AdminProductControllerTest {
 		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 	}
 	
-	//상품 목록 >> 비진열 포함
+	//상품 목록
 	@Test
 	public void testAProductListRead() throws Exception {
 		//test >> api
 		ResultActions resultActions = 
-				mockMvc.perform(get("/api/adminproduct/list").contentType(MediaType.APPLICATION_JSON));
+				mockMvc.perform(get("/api/admin/product/list").contentType(MediaType.APPLICATION_JSON));
 
 		resultActions
 		.andExpect(status().isOk()).andDo(print())
 		.andExpect(jsonPath("$.result", is("success")))
 		.andExpect(jsonPath("$.data.productList[0].no", is(1)))
-		.andExpect(jsonPath("$.data.productList[0].name", is("productTest1")));
+		.andExpect(jsonPath("$.data.productList[0].name", is("product1")));
 	}
 	
 	//상품 추가
@@ -67,8 +74,23 @@ public class AdminProductControllerTest {
 	public void testBProductWrite() throws Exception {
 		//test >> api
 		ResultActions resultActions = 
-				mockMvc.perform(post("/api/adminproduct/add")
-						.param("name", "productTest1")
+				mockMvc.perform(post("/api/admin/product/add")
+						.param("name", "product1")
+						.param("categoryNo", "1")
+						.param("price", "20000")
+						.param("shortDescription", "설명")
+						.param("alignUse", "Y")
+						
+						.contentType(MediaType.APPLICATION_JSON));
+
+		resultActions
+		.andExpect(status().isOk()).andDo(print())
+		.andExpect(jsonPath("$.result", is("success")))
+		.andExpect(jsonPath("$.data.productNo", is(1)));
+		
+		//invalidation in name = 상품명 입력값 실패 케이스
+		resultActions = 
+				mockMvc.perform(post("/api/admin/product/add")
 						.param("categoryNo", "1")
 						.param("price", "20000")
 						.param("shortDescription", "설명")
@@ -78,13 +100,13 @@ public class AdminProductControllerTest {
 						.contentType(MediaType.APPLICATION_JSON));
 
 		resultActions
-		.andExpect(status().isOk()).andDo(print())
-		.andExpect(jsonPath("$.result", is("success")))
-		.andExpect(jsonPath("$.data.flag", is(true)));
+		.andExpect(status().isBadRequest()).andDo(print())
+		.andExpect(jsonPath("$.result", is("fail")));
 		
-		//invalidation in name, price = 상품명 입력값 실패 케이스
+		//invalidation in price = 상품가격 입력값 실패 케이스 
 		resultActions = 
-				mockMvc.perform(post("/api/adminproduct/add")
+				mockMvc.perform(post("/api/admin/product/add")
+						.param("name", "product1")
 						.param("categoryNo", "1")
 						.param("shortDescription", "설명")
 						.param("alignUse", "Y")
@@ -102,26 +124,39 @@ public class AdminProductControllerTest {
 	public void testCProductUpdate() throws Exception {
 		//test >> api
 		ResultActions resultActions = 
-				mockMvc.perform(put("/api/adminproduct/update/{no}",1L)
-						.param("name", "productTest1-update")
-						.param("shortDescription", "productTest1-update")
-						.param("price", "300000")
+				mockMvc.perform(put("/api/admin/product/update/{no}",1L)
+						.param("name", "product1-update")
+						.param("categoryNo", "2")
+						.param("shortDescription", "설명-update")
+						.param("price", "30000")
 						.param("alignUse", "Y")
-						.param("alignNo", "3")
 						.contentType(MediaType.APPLICATION_JSON));
 		
 		resultActions
 		.andExpect(status().isOk()).andDo(print())
 		.andExpect(jsonPath("$.result", is("success")))
-		.andExpect(jsonPath("$.data.productList[0].no", is(1)))
-		.andExpect(jsonPath("$.data.productList[0].name", is("productTest1-update")))
-		.andExpect(jsonPath("$.data.productList[0].price", is(300000)))
-		.andExpect(jsonPath("$.data.productList[0].alignUse", is("Y")))
-		.andExpect(jsonPath("$.data.productList[0].alignNo", is(3)));
+		.andExpect(jsonPath("$.data.flag", is(true)));
 		
-		//invalidation in name, price = 상품명 empty, 가격 null 입력값 실패 케이스
+		//invalidation in name = 상품명 입력값 실패 케이스
 		resultActions = 
-				mockMvc.perform(put("/api/adminproduct/update/{no}",1L)
+				mockMvc.perform(put("/api/admin/product/update/{no}",1L)
+						.param("categoryNo", "2")
+						.param("shortDescription", "설명-update")
+						.param("price", "30000")
+						.param("alignUse", "N")
+						.contentType(MediaType.APPLICATION_JSON));
+
+		resultActions
+		.andExpect(status().isBadRequest()).andDo(print())
+		.andExpect(jsonPath("$.result", is("fail")));
+		
+		//invalidation in price = 상품가격 입력값 실패 케이스
+		resultActions = 
+				mockMvc.perform(put("/api/admin/product/update/{no}",1L)
+						.param("name", "product1-update")
+						.param("categoryNo", "2")
+						.param("shortDescription", "설명-update")
+						.param("alignUse", "N")
 						.contentType(MediaType.APPLICATION_JSON));
 
 		resultActions
@@ -134,7 +169,7 @@ public class AdminProductControllerTest {
 	public void testDProductDelete() throws Exception {
 		//test >> api
 		ResultActions resultActions = 
-				mockMvc.perform(delete("/api/adminproduct/delete/{no}",1L).contentType(MediaType.APPLICATION_JSON));
+				mockMvc.perform(delete("/api/admin/product/delete/{no}",1L).contentType(MediaType.APPLICATION_JSON));
 	
 		resultActions
 		.andExpect(status().isOk()).andDo(print())
@@ -147,9 +182,9 @@ public class AdminProductControllerTest {
 	public void testEImageWrite() throws Exception {
 		//test >> api
 		ResultActions resultActions = 
-				mockMvc.perform(post("/api/adminproduct/image/add")
+				mockMvc.perform(post("/api/admin/product/image/add")
 						.param("productNo", "1")
-						.param("url", "/image/shop-uploads/test.png")
+						.param("url", "image1")
 						.param("repOrBasic", "R")
 						.contentType(MediaType.APPLICATION_JSON));
 
@@ -161,9 +196,9 @@ public class AdminProductControllerTest {
 		
 		//invalidation in repOrBasic = 이미지구분 입력값 실패 케이스
 		resultActions = 
-				mockMvc.perform(post("/api/adminproduct/image/add")
+				mockMvc.perform(post("/api/admin/product/image/add")
 						.param("productNo", "1")
-						.param("url", "/image/shop-uploads/test.png")
+						.param("url", "image1")
 						.contentType(MediaType.APPLICATION_JSON));
 
 		resultActions
@@ -176,7 +211,7 @@ public class AdminProductControllerTest {
 	public void testFImageDelete() throws Exception {
 		//test >> api
 		ResultActions resultActions = 
-				mockMvc.perform(delete("/api/adminproduct/image/delete/{no}",1L).contentType(MediaType.APPLICATION_JSON));
+				mockMvc.perform(delete("/api/admin/product/image/delete/{no}",1L).contentType(MediaType.APPLICATION_JSON));
 	
 		resultActions
 		.andExpect(status().isOk()).andDo(print())
@@ -189,9 +224,9 @@ public class AdminProductControllerTest {
 	public void testGOptionWrite() throws Exception {
 		//test >> api (상위)
 		ResultActions resultActions = 
-				mockMvc.perform(post("/api/adminproduct/option/add")
+				mockMvc.perform(post("/api/admin/product/option/add")
 						.param("productNo", "1")
-						.param("name", "베이지")
+						.param("name", "black")
 						.param("depth", "1")
 						
 						.contentType(MediaType.APPLICATION_JSON));
@@ -200,13 +235,13 @@ public class AdminProductControllerTest {
 		.andExpect(status().isOk()).andDo(print())
 		.andExpect(jsonPath("$.result", is("success")))
 		.andExpect(jsonPath("$.data.optionList[2].productNo", is(1)))
-		.andExpect(jsonPath("$.data.optionList[2].name", is("베이지")))
+		.andExpect(jsonPath("$.data.optionList[2].name", is("black")))
 		.andExpect(jsonPath("$.data.optionList[2].depth", is(1)));
 		
 		//invalidation in productNo = 상품번호 입력값 실패 케이스
 		resultActions = 
-				mockMvc.perform(post("/api/adminproduct/option/add")
-						.param("name", "베이지")
+				mockMvc.perform(post("/api/admin/product/option/add")
+						.param("name", "black")
 						.param("depth", "1")
 						
 						.contentType(MediaType.APPLICATION_JSON));
@@ -222,7 +257,7 @@ public class AdminProductControllerTest {
 	public void testHOptionDelete() throws Exception {
 		//test >> api
 		ResultActions resultActions = 
-				mockMvc.perform(delete("/api/adminproduct/option/delete/{no}",1L).contentType(MediaType.APPLICATION_JSON));
+				mockMvc.perform(delete("/api/admin/product/option/delete/{no}",1L).contentType(MediaType.APPLICATION_JSON));
 	
 		resultActions
 		.andExpect(status().isOk()).andDo(print())

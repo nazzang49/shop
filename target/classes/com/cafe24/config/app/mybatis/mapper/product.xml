@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="product">
+
+	<!-- 상품 추가 >> 상품 번호 리턴 -->
+	<insert id="insert" parameterType="productvo">
+	<![CDATA[
+		insert into product
+		values(
+		null,
+		#{categoryNo},
+		#{name},
+		#{price},
+		#{shortDescription},
+		#{alignUse},
+		#{alignNo})
+	]]>
+		<selectKey keyProperty="no" resultType="long" order="AFTER">
+			SELECT LAST_INSERT_ID()
+   		</selectKey>
+	</insert>
+	
+	<!-- 진열 순서 -->
+	<select id="selectMaxAlignNo" resultType="productvo">
+	<![CDATA[
+		select max(alignNo)
+		from product
+		where categoryNo=#{categoryNo}
+	]]>
+	</select>
+	
+	<!-- 메인 상품 목록 -->
+	<select id="selectAll">
+	<![CDATA[
+		select *
+		from product
+		order by no desc
+	]]>
+	</select>
+	
+	<!-- 특정 카테고리 내 상품 목록 -->
+	<select id="selectAllByCategoryNo" parameterType="productvo">
+	<![CDATA[
+		select *
+		from product
+		where categoryNo=#{categoryNo}
+		order by alignNo desc
+	]]>
+	</select>
+	
+	<!-- 상품 수정 -->
+	<update id="update" parameterType="productvo">
+	<![CDATA[
+		update product set
+		categoryNo=#{categoryNo},
+		name=#{name},
+		price=#{price},
+		name=#{name},
+		shortDescription=#{shortDescription}
+		where no=#{no}
+	]]>
+	</update>
+	
+	<!-- 상품 삭제 -->
+	<delete id="delete" parameterType="productvo">
+	<![CDATA[
+		delete
+		from product
+		where no=#{no}
+	]]>
+	</delete>
+
+</mapper>

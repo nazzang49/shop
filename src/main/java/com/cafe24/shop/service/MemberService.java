@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import com.cafe24.shop.repository.MemberDAO;
 import com.cafe24.shop.vo.MemberVO;
 
+//회원
 @Service
 public class MemberService {
 

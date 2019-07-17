@@ -1,5 +1,7 @@
 package com.cafe24.shop.vo;
 
+import java.util.List;
+
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
@@ -32,6 +34,8 @@ public class OrderVO {
 	private Long paymentPrice;
 	@NotEmpty
 	private String status;
+	//선택 주문 by 체크박스 >> 장바구니 번호 리스트
+	private List<Long> cartNoList;
 	
 	public OrderVO() {
 		
@@ -55,6 +59,12 @@ public class OrderVO {
 		this.status=status;
 	}
 	
+	public List<Long> getCartNoList() {
+		return cartNoList;
+	}
+	public void setCartNoList(List<Long> cartNoList) {
+		this.cartNoList = cartNoList;
+	}
 	public String getStatus() {
 		return status;
 	}
@@ -140,6 +150,6 @@ public class OrderVO {
 				+ customerAddress + ", customerPhone=" + customerPhone + ", customerEmail=" + customerEmail
 				+ ", receiverName=" + receiverName + ", receiverAddress=" + receiverAddress + ", receiverPhone="
 				+ receiverPhone + ", receiverMsg=" + receiverMsg + ", orderDate=" + orderDate + ", paymentPrice="
-				+ paymentPrice + ", status=" + status + "]";
+				+ paymentPrice + ", status=" + status + ", cartNoList=" + cartNoList + "]";
 	}
 }

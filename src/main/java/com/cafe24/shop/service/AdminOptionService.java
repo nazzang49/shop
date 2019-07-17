@@ -47,12 +47,8 @@ public class AdminOptionService {
 	
 	//test by 하드코딩
 	//옵션 삭제
-	public boolean 옵션삭제(Long no) {
-		initTables();
-		if(no!=null) {
-			for(OptionVO tvo : optionTable) if(tvo.getNo()==no) return true;
-		}
-		return false;
+	public boolean 옵션삭제(OptionVO fvo) {
+		return true;
 	}
 	
 }

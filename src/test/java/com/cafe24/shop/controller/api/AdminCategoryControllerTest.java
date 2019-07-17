@@ -19,12 +19,14 @@ import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.cafe24.shop.config.AppConfig;
@@ -35,6 +37,8 @@ import com.google.gson.Gson;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes= {AppConfig.class, TestWebConfig.class})
 @WebAppConfiguration
+@Transactional
+@Rollback(true)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class AdminCategoryControllerTest {
 
@@ -58,12 +62,12 @@ public class AdminCategoryControllerTest {
 	public void testBCategoryListRead() throws Exception {
 		//test >> api
 		ResultActions resultActions = 
-				mockMvc.perform(get("/api/admincategory/list").contentType(MediaType.APPLICATION_JSON));
+				mockMvc.perform(get("/api/admin/category/list").contentType(MediaType.APPLICATION_JSON));
 
 		resultActions
 		.andExpect(status().isOk()).andDo(print())
 		.andExpect(jsonPath("$.result", is("success")))
-		.andExpect(jsonPath("$.data.categoryList[0].no", is(1)))
+		.andExpect(jsonPath("$.data.categoryList[0].no", is(8)))
 		.andExpect(jsonPath("$.data.categoryList[0].name", is("categoryTest1")));
 
 	}
@@ -73,7 +77,7 @@ public class AdminCategoryControllerTest {
 	public void testACategoryWrite() throws Exception {
 		//test >> api
 		ResultActions resultActions = 
-				mockMvc.perform(post("/api/admincategory/add")
+				mockMvc.perform(post("/api/admin/category/add")
 						.param("name", "categoryTest1")
 						.param("groupNo", "1")
 						.param("depth", "1")
@@ -86,7 +90,7 @@ public class AdminCategoryControllerTest {
 		
 		//invalidation in name = 이름 입력값 실패 케이스
 		resultActions = 
-				mockMvc.perform(post("/api/admincategory/add")
+				mockMvc.perform(post("/api/admin/category/add")
 						.contentType(MediaType.APPLICATION_JSON));
 
 		resultActions
@@ -99,7 +103,7 @@ public class AdminCategoryControllerTest {
 	public void testCCategoryUpdate() throws Exception {
 		//test >> api
 		ResultActions resultActions = 
-				mockMvc.perform(put("/api/admincategory/update/{no}",1L)
+				mockMvc.perform(put("/api/admin/category/update/{no}",8L)
 						.param("name", "categoryTest2")
 						.contentType(MediaType.APPLICATION_JSON));
 		
@@ -110,7 +114,7 @@ public class AdminCategoryControllerTest {
 		
 		//invalidation in name = 이름 입력값 실패 케이스
 		resultActions = 
-				mockMvc.perform(put("/api/admincategory/update/{no}",1L)
+				mockMvc.perform(put("/api/admin/category/update/{no}",8L)
 						.contentType(MediaType.APPLICATION_JSON));
 
 		resultActions
@@ -123,7 +127,7 @@ public class AdminCategoryControllerTest {
 	public void testDCategoryDelete() throws Exception {
 		//test >> api
 		ResultActions resultActions = 
-				mockMvc.perform(delete("/api/admincategory/delete/{no}",1L).contentType(MediaType.APPLICATION_JSON));
+				mockMvc.perform(delete("/api/admin/category/delete/{no}",8L).contentType(MediaType.APPLICATION_JSON));
 	
 		resultActions
 		.andExpect(status().isOk()).andDo(print())

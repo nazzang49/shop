@@ -11,16 +11,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.cafe24.shop.config.AppConfig;
@@ -32,6 +36,9 @@ import com.google.gson.Gson;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes= {AppConfig.class, TestWebConfig.class})
 @WebAppConfiguration
+@Transactional
+@Rollback(true)
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class UserProductControllerTest {
 
 	private MockMvc mockMvc;
@@ -49,7 +56,7 @@ public class UserProductControllerTest {
 		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 	}
 	
-	//(고객)상품목록 >> 추후 카테고리, 검색 활용한 조회 내용 추가
+	//(고객) 상품 목록
 	@Test
 	public void testAProductListRead() throws Exception {
 		//test >> api
@@ -66,6 +73,7 @@ public class UserProductControllerTest {
 		.andExpect(jsonPath("$.data['productList'][0].shortDescription", is("기능성 티셔츠")))
 		.andExpect(jsonPath("$.data['productList'][0].alignUse", is("Y")))
 		.andExpect(jsonPath("$.data['productList'][0].alignNo", is(1)))
+		
 		//썸네일 이미지
 		.andExpect(jsonPath("$.data['imageList'][0].no", is(1)))
 		.andExpect(jsonPath("$.data['imageList'][0].productNo", is(1)))
@@ -73,7 +81,7 @@ public class UserProductControllerTest {
 		.andExpect(jsonPath("$.data['imageList'][0].repOrBasic", is("R")));
 	}
 	
-	//상품 상세
+	//(고객) 상품 상세 >> 상품 기본 + 이미지 + 옵션 및 재고
 	@Test
 	public void testBProductViewRead() throws Exception {
 		//test >> api

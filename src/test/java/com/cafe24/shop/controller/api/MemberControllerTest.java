@@ -37,13 +37,13 @@ import com.cafe24.shop.repository.MemberDAO;
 import com.cafe24.shop.vo.MemberVO;
 import com.google.gson.Gson;
 
-//사용자(고객, 관리자) 컨트롤러 테스트 클래스
+//(회원) 컨트롤러 테스트 클래스
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes= {AppConfig.class, TestWebConfig.class})
 @WebAppConfiguration
-//메소드 순서 지정
+@Transactional
+@Rollback(true)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-//@Transactional
 public class MemberControllerTest {
 
 	private MockMvc mockMvc;
@@ -62,10 +62,11 @@ public class MemberControllerTest {
 		
 	}
 	
-	//조인 >> 아이디 중복 체크
+	//아이디 중복 체크
 	@Test
 	public void testBMemberCheckId() throws Exception {
 		//test >> api
+		//중복 O
 		ResultActions resultActions = 
 				mockMvc.perform(post("/api/member/checkid")
 						.param("id", "test")
@@ -75,6 +76,17 @@ public class MemberControllerTest {
 		.andExpect(status().isOk()).andDo(print())
 		.andExpect(jsonPath("$.result", is("success")))
 		.andExpect(jsonPath("$.data.flag", is(true)));
+		
+		//중복 X
+		resultActions = 
+				mockMvc.perform(post("/api/member/checkid")
+						.param("id", "test1")
+						.contentType(MediaType.APPLICATION_JSON));
+		
+		resultActions
+		.andExpect(status().isOk()).andDo(print())
+		.andExpect(jsonPath("$.result", is("success")))
+		.andExpect(jsonPath("$.data.flag", is(false)));
 	}
 	
 	//조인
@@ -102,7 +114,7 @@ public class MemberControllerTest {
 				mockMvc.perform(post("/api/member/join")
 						.param("id", "test")
 						.param("name","test")
-						.param("password", "pw")
+						.param("password", "test")
 						.param("phone", "010-1111-1111")
 						.param("email", "test@gmail.com")
 						.param("address", "서울")
@@ -151,13 +163,13 @@ public class MemberControllerTest {
 		resultActions
 		.andExpect(status().isOk()).andDo(print())
 		.andExpect(jsonPath("$.result", is("success")))
-		.andExpect(jsonPath("$.data.mvo.id", is("test")))
-		.andExpect(jsonPath("$.data.mvo.name", is("test")))
-		.andExpect(jsonPath("$.data.mvo.address", is("서울")))
-		.andExpect(jsonPath("$.data.mvo.phone", is("010-1111-1111")))
-		.andExpect(jsonPath("$.data.mvo.email", is("test@gmail.com")))
-		.andExpect(jsonPath("$.data.mvo.role", is("USER")))
-		.andExpect(jsonPath("$.data.mvo.regDate", is("2019-07-16")));
+		.andExpect(jsonPath("$.data.memberVO.id", is("test")))
+		.andExpect(jsonPath("$.data.memberVO.name", is("test")))
+		.andExpect(jsonPath("$.data.memberVO.address", is("서울")))
+		.andExpect(jsonPath("$.data.memberVO.phone", is("010-1111-1111")))
+		.andExpect(jsonPath("$.data.memberVO.email", is("test@gmail.com")))
+		.andExpect(jsonPath("$.data.memberVO.role", is("USER")))
+		.andExpect(jsonPath("$.data.memberVO.regDate", is("2019-07-18")));
 	}
 	
 	//회원수정 >> 아이디 및 권한 수정 불가
@@ -170,7 +182,7 @@ public class MemberControllerTest {
 						.param("name","test-update")
 						.param("password", "jy@park2@@")
 						.param("phone", "010-1111-1111")
-						.param("email", "test@gmail.com")
+						.param("email", "test@naver.com")
 						.param("address", "부산")
 						.contentType(MediaType.APPLICATION_JSON));
 		
@@ -184,9 +196,9 @@ public class MemberControllerTest {
 				mockMvc.perform(put("/api/member/update")
 						.param("id", "test")
 						.param("name","test-update")
-						.param("password", "pw")
+						.param("password", "test")
 						.param("phone", "010-1111-1111")
-						.param("email", "test@gmail.com")
+						.param("email", "test@naver.com")
 						.param("address", "부산")
 						.contentType(MediaType.APPLICATION_JSON));
 		

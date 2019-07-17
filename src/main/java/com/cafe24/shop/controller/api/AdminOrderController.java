@@ -32,8 +32,8 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
 //(관리자) 주문 컨트롤러
-@RequestMapping("/api/adminorder")
-@RestController("adminorderAPIController")
+@RequestMapping("/api/admin/order")
+@RestController("adminOrderAPIController")
 public class AdminOrderController {
 
 	@Autowired
@@ -42,11 +42,9 @@ public class AdminOrderController {
 	@Autowired
 	private AdminOrderService adminOrderService;
 	
-	//주문 목록
 	@ApiOperation(value="주문 목록")
 	@GetMapping(value="/list")
 	public JSONResult getList() {
-		
 		
 		//관리자 인증
 		
@@ -60,34 +58,28 @@ public class AdminOrderController {
 		return result;
 	}
 	
-	//주문 상태 수정
-	@ApiImplicitParams({
-		@ApiImplicitParam(name="no", value="주문 번호", required=true, dataType="path", defaultValue=""),
-		@ApiImplicitParam(name="status", value="주문 상태", required=true, dataType="string", defaultValue="")
-	})
 	@ApiOperation(value="주문 상태 수정")
 	@PutMapping(value="/update/{no}")
-	public ResponseEntity<JSONResult> udpate(@ModelAttribute OrderVO ovo,
+	public ResponseEntity<JSONResult> udpate(@ModelAttribute OrderVO orderVO,
 							 				 BindingResult br) {
+		
 		//관리자 인증
 		
 		
 		//valid
 		Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-		Set<ConstraintViolation<OrderVO>> validatorResults = validator.validateProperty(ovo, "status");
+		Set<ConstraintViolation<OrderVO>> validatorResults = validator.validateProperty(orderVO, "status");
 		
 		if(!validatorResults.isEmpty()) {
 			for(ConstraintViolation<OrderVO> validatorResult : validatorResults) {
-				String msg = messageSource.getMessage("NotEmpty.ovo.status", null, LocaleContextHolder.getLocale());
+				String msg = messageSource.getMessage("NotEmpty.orderVO.status", null, LocaleContextHolder.getLocale());
 				JSONResult result = JSONResult.fail(msg);
-				//에러가 발생한 변수 확인
-				System.out.println(validatorResult.getPropertyPath());
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
 			}
 		}
 		
 		
-		boolean flag = adminOrderService.주문상태수정(ovo);
+		boolean flag = adminOrderService.주문상태수정(orderVO);
 	
 		//리턴 데이터
 		Map<String, Object> data = new HashMap<>();
