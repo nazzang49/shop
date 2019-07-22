@@ -3,7 +3,7 @@
 
 <mapper namespace="product">
 
-	<!-- 상품 추가 >> 상품 번호 리턴 -->
+	<!-- 상품 추가-->
 	<insert id="insert" parameterType="productvo">
 	<![CDATA[
 		insert into product
@@ -16,37 +16,43 @@
 		#{alignUse},
 		#{alignNo})
 	]]>
-		<selectKey keyProperty="no" resultType="long" order="AFTER">
-			SELECT LAST_INSERT_ID()
-   		</selectKey>
 	</insert>
 	
-	<!-- 진열 순서 -->
-	<select id="selectMaxAlignNo" resultType="productvo">
+	<!-- 상품추가 >> 상품 번호 리턴 -->
+	<select id="selectMaxProductNo" resultType="long">
 	<![CDATA[
-		select max(alignNo)
+		select max(no) from product
+	]]>
+	</select>
+	
+	<!-- 진열 순서 -->
+	<select id="selectMaxAlignNo" parameterType="productvo" resultType="long">
+	<![CDATA[
+		select count(*)
 		from product
 		where categoryNo=#{categoryNo}
 	]]>
 	</select>
 	
-	<!-- 메인 상품 목록 -->
-	<select id="selectAll">
+	<!-- 상품 목록 -->
+	<select id="selectAllByCategoryNo" parameterType="productvo" resultType="productvo">
 	<![CDATA[
 		select *
 		from product
-		order by no desc
 	]]>
-	</select>
-	
-	<!-- 특정 카테고리 내 상품 목록 -->
-	<select id="selectAllByCategoryNo" parameterType="productvo">
+		<choose>
+		<when test="categoryNo!=null">
 	<![CDATA[
-		select *
-		from product
 		where categoryNo=#{categoryNo}
 		order by alignNo desc
 	]]>
+		</when>
+		<otherwise>
+	<![CDATA[
+		order by no desc
+	]]>
+		</otherwise>
+		</choose>
 	</select>
 	
 	<!-- 상품 수정 -->
@@ -56,8 +62,8 @@
 		categoryNo=#{categoryNo},
 		name=#{name},
 		price=#{price},
-		name=#{name},
-		shortDescription=#{shortDescription}
+		shortDescription=#{shortDescription},
+		alignUse=#{alignUse}
 		where no=#{no}
 	]]>
 	</update>
@@ -70,5 +76,17 @@
 		where no=#{no}
 	]]>
 	</delete>
+	
+	<!-- 상품 삭제 >> 동일 카테고리 내 상품 진열번호 -1 -->
+	<update id="updateAlignNoWhenDelete" parameterType="productvo">
+	<![CDATA[
+		update product set
+		alignNo=alignNo-1
+		where categoryNo=#{categoryNo}
+		and alignNo>=#{alignNo}
+	]]>
+	</update>
+
+	
 
 </mapper>

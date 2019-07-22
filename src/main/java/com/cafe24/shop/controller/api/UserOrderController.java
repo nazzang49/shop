@@ -20,8 +20,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.cafe24.shop.dto.JSONResult;
+import com.cafe24.shop.service.UserCartService;
 import com.cafe24.shop.service.UserOrderService;
 import com.cafe24.shop.vo.CartVO;
 import com.cafe24.shop.vo.OrderDetailVO;
@@ -35,7 +37,10 @@ import io.swagger.annotations.ApiOperation;
 public class UserOrderController {
 
 	@Autowired
-	private UserOrderService orderService;
+	private UserOrderService userOrderService;
+	
+	@Autowired
+	private UserCartService userCartService;
 	
 	@ApiOperation(value="장바구니 추가")
 	@PostMapping(value="/cart/add")
@@ -44,7 +49,7 @@ public class UserOrderController {
 		
 		//본인 인증
 		
-		//valid
+		//valid >> 수량 min, max 추가
 		if(br.hasErrors()) {
 			List<ObjectError> errorList = br.getAllErrors();
 			for(ObjectError error : errorList) {
@@ -54,7 +59,7 @@ public class UserOrderController {
 			}
 		}
 		
-		boolean flag = orderService.장바구니추가(cartVO);
+		boolean flag = userCartService.장바구니추가(cartVO);
 		
 		Map<String, Object> data = new HashMap<>();
 		data.put("flag", flag);
@@ -68,40 +73,47 @@ public class UserOrderController {
 
 		//본인 인증
 		
-		
-		//수정
-		
-		List<String> categoryList = orderService.장바구니목록(cartVO);
+				
+		List<CartVO> cartList = userCartService.장바구니목록(cartVO);
 		
 		Map<String, Object> data = new HashMap<>();
-		data.put("categoryList", categoryList);
+		data.put("cartList", cartList);
 		JSONResult result = JSONResult.success(data);
 		return result;
 	}
 	
-	@ApiOperation(value="장바구니 수량 수정")
+	@ApiOperation(value="장바구니 수량, 상품옵션 수정")
 	@PutMapping(value="/cart/update/{no}")
-	public JSONResult cartUpdate(@ModelAttribute CartVO cartVO) {
+	public ResponseEntity<JSONResult> cartUpdate(@ModelAttribute @Valid CartVO cartVO,
+								 BindingResult br) {
 		
 		//본인 인증
 		
-		//수량 min and max valid
+		//valid >> 수량 min, max 추가
+		if(br.hasErrors()) {
+			List<ObjectError> errorList = br.getAllErrors();
+			for(ObjectError error : errorList) {
+				String msg = error.getDefaultMessage();
+				JSONResult result = JSONResult.fail(msg);
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);	
+			}
+		}
 		
-		boolean flag = orderService.장바구니수량수정(cartVO);
+		boolean flag = userCartService.장바구니수정(cartVO);
 		
 		Map<String, Object> data = new HashMap<>();
 		data.put("flag", flag);
 		JSONResult result = JSONResult.success(data);
-		return result;
+		return ResponseEntity.status(HttpStatus.OK).body(result);
 	}
 	
 	@ApiOperation(value="장바구니 삭제")
-	@DeleteMapping(value="/cart/delete/{no}")
-	public JSONResult cartDelete(@ModelAttribute CartVO cartVO) {
+	@DeleteMapping(value="/cart/delete")
+	public JSONResult cartDelete(@RequestParam(value="no", required=true) List<Long> cartNoList) {
 		
 		//본인 인증
 		
-		boolean flag = orderService.장바구니삭제(cartVO);
+		boolean flag = userCartService.장바구니삭제(cartNoList);
 		
 		Map<String, Object> data = new HashMap<>();
 		data.put("flag", flag);
@@ -124,9 +136,9 @@ public class UserOrderController {
 				JSONResult result = JSONResult.fail(msg);
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
 			}
-		}
+		}		
 		
-		boolean flag = orderService.주문추가(orderVO);
+		boolean flag = userOrderService.주문추가(orderVO);
 		
 		Map<String, Object> data = new HashMap<>();
 		data.put("flag", flag);
@@ -140,7 +152,7 @@ public class UserOrderController {
 
 		//본인 인증
 		
-		List<OrderDetailVO> orderDetailList = orderService.주문상세(orderVO);
+		List<OrderDetailVO> orderDetailList = userOrderService.주문상세(orderVO);
 		
 		Map<String, Object> data = new HashMap<>();
 		data.put("orderDetailList", orderDetailList);

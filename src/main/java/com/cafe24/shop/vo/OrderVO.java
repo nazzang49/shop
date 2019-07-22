@@ -6,7 +6,6 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-//일단, 기본 정보만 테스트
 public class OrderVO {
 	
 	//pk
@@ -28,14 +27,18 @@ public class OrderVO {
 	private String receiverPhone;
 	@NotEmpty
 	private String receiverMsg;
-	@NotEmpty
 	private String orderDate;
+	@NotEmpty
+	private String paymentCategory;
 	@NotNull
 	private Long paymentPrice;
-	@NotEmpty
 	private String status;
 	//선택 주문 by 체크박스 >> 장바구니 번호 리스트
 	private List<Long> cartNoList;
+	//회원 이름
+	private String memberName;
+	//암복호화 키값
+	private String keyValue;
 	
 	public OrderVO() {
 		
@@ -59,6 +62,24 @@ public class OrderVO {
 		this.status=status;
 	}
 	
+	public String getPaymentCategory() {
+		return paymentCategory;
+	}
+	public void setPaymentCategory(String paymentCategory) {
+		this.paymentCategory = paymentCategory;
+	}
+	public String getKeyValue() {
+		return keyValue;
+	}
+	public void setKeyValue(String keyValue) {
+		this.keyValue = keyValue;
+	}
+	public String getMemberName() {
+		return memberName;
+	}
+	public void setMemberName(String memberName) {
+		this.memberName = memberName;
+	}
 	public List<Long> getCartNoList() {
 		return cartNoList;
 	}
@@ -149,7 +170,8 @@ public class OrderVO {
 		return "OrderVO [no=" + no + ", memberId=" + memberId + ", customerName=" + customerName + ", customerAddress="
 				+ customerAddress + ", customerPhone=" + customerPhone + ", customerEmail=" + customerEmail
 				+ ", receiverName=" + receiverName + ", receiverAddress=" + receiverAddress + ", receiverPhone="
-				+ receiverPhone + ", receiverMsg=" + receiverMsg + ", orderDate=" + orderDate + ", paymentPrice="
-				+ paymentPrice + ", status=" + status + ", cartNoList=" + cartNoList + "]";
+				+ receiverPhone + ", receiverMsg=" + receiverMsg + ", orderDate=" + orderDate + ", paymentCategory="
+				+ paymentCategory + ", paymentPrice=" + paymentPrice + ", status=" + status + ", cartNoList="
+				+ cartNoList + ", memberName=" + memberName + ", keyValue=" + keyValue + "]";
 	}
 }

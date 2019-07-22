@@ -33,7 +33,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 //spring security
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig extends WebSecurityConfigurerAdapter{
+public class AppSecurityConfig extends WebSecurityConfigurerAdapter{
 	
 	//spring security filter 연결 작업
 	//WebSecurity 객체 >> springSecurityFilterChain을 이름으로 가지는 DelegatingFilterProxy 빈 생성

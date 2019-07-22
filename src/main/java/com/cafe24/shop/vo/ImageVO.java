@@ -9,7 +9,6 @@ public class ImageVO {
 
 	private Long no;
 	//상품 번호
-	@NotNull
 	private Long productNo;
 	//이미지 경로
 	@NotEmpty
@@ -23,12 +22,10 @@ public class ImageVO {
 		
 	}
 	
-	public ImageVO(Long no, Long productNo, String url, String repOrBasic, String regDate) {
-		this.no=no;
+	public ImageVO(Long productNo, String url, String repOrBasic) {
 		this.productNo=productNo;
 		this.url=url;
 		this.repOrBasic=repOrBasic;
-		this.regDate=regDate;
 	}
 	
 	public Long getNo() {

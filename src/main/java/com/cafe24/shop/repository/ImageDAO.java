@@ -20,16 +20,16 @@ public class ImageDAO {
 	}
 	
 	//(관리자) 이미지 삭제
-	public boolean delete(ImageVO imageVO) {
-		return sqlSession.delete("image.delete", imageVO)==1;
+	public boolean delete(Long no) {
+		return sqlSession.delete("image.delete", no)==1;
 	}
 	
-	//(관리자) 메인 상품 썸네일 목록
-	public List<ImageVO> selectAllThumbnail() {
-		return sqlSession.selectList("image.selectAllThumbnail");
+	//(관리자) 상품별 이미지 목록
+	public List<ImageVO> selectAllImageByProductNo(Long productNo) {
+		return sqlSession.selectList("image.selectAllImageByProductNo", productNo);
 	}
 	
-	//(관리자) 특정 카테고리 내 상품 썸네일 목록
+	//(회원) 카테고리별 상품 썸네일 목록
 	public List<ImageVO> selectAllThumbnailByCategoryNo(ProductVO productVO) {
 		return sqlSession.selectList("image.selectAllThumbnailByCategoryNo", productVO);
 	}

@@ -4,13 +4,22 @@
 	<typeAliases>
 		<typeAlias alias="membervo" type="com.cafe24.shop.vo.MemberVO"/>
 		<typeAlias alias="categoryvo" type="com.cafe24.shop.vo.CategoryVO"/>
+		<typeAlias alias="cartvo" type="com.cafe24.shop.vo.CartVO"/>
 		<typeAlias alias="productvo" type="com.cafe24.shop.vo.ProductVO"/>
 		<typeAlias alias="imagevo" type="com.cafe24.shop.vo.ImageVO"/>
+		<typeAlias alias="optionvo" type="com.cafe24.shop.vo.OptionVO"/>
+		<typeAlias alias="ordervo" type="com.cafe24.shop.vo.OrderVO"/>
+		<typeAlias alias="orderdetailvo" type="com.cafe24.shop.vo.OrderDetailVO"/>
+		<typeAlias alias="productoptionvo" type="com.cafe24.shop.vo.ProductOptionVO"/>
     </typeAliases>
 	<mappers>
 		<mapper resource="com/cafe24/config/app/mybatis/mapper/member.xml" />
 		<mapper resource="com/cafe24/config/app/mybatis/mapper/category.xml" />
+		<mapper resource="com/cafe24/config/app/mybatis/mapper/cart.xml" />
 		<mapper resource="com/cafe24/config/app/mybatis/mapper/product.xml" />
 		<mapper resource="com/cafe24/config/app/mybatis/mapper/image.xml" />
+		<mapper resource="com/cafe24/config/app/mybatis/mapper/option.xml" />
+		<mapper resource="com/cafe24/config/app/mybatis/mapper/order.xml" />
+		<mapper resource="com/cafe24/config/app/mybatis/mapper/productOption.xml" />
 	</mappers>
 </configuration>

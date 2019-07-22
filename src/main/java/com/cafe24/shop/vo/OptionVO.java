@@ -6,7 +6,6 @@ import org.hibernate.validator.constraints.NotEmpty;
 public class OptionVO {
 
 	private Long no;
-	@NotNull
 	private Long productNo;
 	@NotEmpty
 	private String name;
@@ -17,8 +16,7 @@ public class OptionVO {
 
 	}
 	
-	public OptionVO(Long no, Long productNo, String name, Long depth) {
-		this.no=no;
+	public OptionVO(Long productNo, String name, Long depth) {
 		this.productNo=productNo;
 		this.name=name;
 		this.depth=depth;

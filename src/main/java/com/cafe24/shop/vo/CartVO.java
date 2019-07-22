@@ -6,12 +6,14 @@ public class CartVO {
 
 	private Long no;
 	private String memberId;
+	@NotNull
 	private Long productOptionNo;
 	//상품별 수량
 	@NotNull
 	private Long cartAmount;
-	//상품별 합계금액 >> 수량 기입 시, 자동 계산
+	//상품 가격
 	private Long cartPrice;
+	private Long orderNo;
 		
 	public CartVO() {
 		
@@ -25,6 +27,12 @@ public class CartVO {
 		this.cartPrice=cartPrice;
 	}
 	
+	public Long getOrderNo() {
+		return orderNo;
+	}
+	public void setOrderNo(Long orderNo) {
+		this.orderNo = orderNo;
+	}
 	public Long getNo() {
 		return no;
 	}
@@ -59,7 +67,7 @@ public class CartVO {
 	@Override
 	public String toString() {
 		return "CartVO [no=" + no + ", memberId=" + memberId + ", productOptionNo=" + productOptionNo + ", cartAmount="
-				+ cartAmount + ", cartPrice=" + cartPrice + "]";
+				+ cartAmount + ", cartPrice=" + cartPrice + ", orderNo=" + orderNo + "]";
 	}
 	
 }

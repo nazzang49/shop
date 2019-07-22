@@ -1,5 +1,7 @@
 package com.cafe24.shop.vo;
 
+import java.util.List;
+
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
@@ -23,6 +25,10 @@ public class ProductVO {
 	@NotEmpty
 	private String alignUse;
 	private Long alignNo;
+	//상품 이미지
+	private List<ImageVO> imageList;
+	//상품 옵션
+	private List<OptionVO> optionList;
 	
 	public ProductVO() {
 		
@@ -39,6 +45,19 @@ public class ProductVO {
 		this.categoryNo=categoryNo;
 	}
 	
+	
+	public List<ImageVO> getImageList() {
+		return imageList;
+	}
+	public void setImageList(List<ImageVO> imageList) {
+		this.imageList = imageList;
+	}
+	public List<OptionVO> getOptionList() {
+		return optionList;
+	}
+	public void setOptionList(List<OptionVO> optionList) {
+		this.optionList = optionList;
+	}
 	public Long getNo() {
 		return no;
 	}
@@ -85,6 +104,7 @@ public class ProductVO {
 	@Override
 	public String toString() {
 		return "ProductVO [no=" + no + ", categoryNo=" + categoryNo + ", name=" + name + ", price=" + price
-				+ ", shortDescription=" + shortDescription + ", alignUse=" + alignUse + ", alignNo=" + alignNo + "]";
+				+ ", shortDescription=" + shortDescription + ", alignUse=" + alignUse + ", alignNo=" + alignNo
+				+ ", imageList=" + imageList + ", optionList=" + optionList + "]";
 	}
 }

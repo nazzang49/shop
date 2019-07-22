@@ -1,35 +1,37 @@
 package com.cafe24.shop.service;
 
-import java.util.ArrayList;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.cafe24.shop.repository.MemberDAO;
 import com.cafe24.shop.vo.MemberVO;
+import com.cafe24.shop.vo.OrderVO;
 
 //(관리자) 회원 서비스
 @Service
 public class AdminUserService {
 
-	//회원 DB
-	private static List<MemberVO> memberTable = new ArrayList<>();
+	@Autowired
+	private MemberDAO memberDao;
 	
-	//DB 초기화
-	public void initTables() {
-		memberTable.clear();
-		memberTable.add(new MemberVO("test1", "jy@park2@@", "박진영", "서울", "010-1111-1111", "test1@naver.com", "USER", "2018-10-01"));
-		memberTable.add(new MemberVO("test2", "jy@park2@@", "박진수", "서울", "010-1111-1111", "test2@naver.com", "USER", "2018-10-01"));
-	}
-	
-	//test by 하드코딩
 	//회원 목록
-	public List<MemberVO> 회원목록() {
-		initTables();
-		return memberTable;
+	public List<MemberVO> 회원목록(String searchType, String searchKwd) {
+		return memberDao.selectBySearch(searchType, searchKwd);
 	}
 	
-	//test by 하드코딩
 	//회원 삭제
-	public boolean 회원삭제(MemberVO memberVO) {
-		return true;
+	public boolean 회원삭제(List<String> userIdList) {
+		boolean flag = true;
+		
+		for(String id : userIdList) {
+			flag = memberDao.deleteByAdmin(id);
+		}
+		return flag;
+	}
+	
+	//회원 주문 목록
+	public List<OrderVO> 회원주문목록(String searchType, String searchKwd) {
+		return memberDao.selectOrderBySearch(searchType, searchKwd);
 	}
 	
 }

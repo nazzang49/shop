@@ -5,14 +5,13 @@ import javax.validation.constraints.NotNull;
 public class ProductOptionVO {
 
 	private Long no;
-	@NotNull
 	private Long productNo;
 	//1차 옵션
 	@NotNull
-	private Long firstOption;
+	private Long firstOptionNo;
 	//2차 옵션
 	@NotNull
-	private Long secondOption;
+	private Long secondOptionNo;
 	//재고수량 >> 비재고의 경우, -1
 	@NotNull
 	private Long remainAmount;
@@ -24,12 +23,11 @@ public class ProductOptionVO {
 		
 	}
 	
-	public ProductOptionVO(Long no, Long productNo, Long firstOption, Long secondOption, Long remainAmount, Long availableAmount) {
+	public ProductOptionVO(Long productNo, Long firstOptionNo, Long secondOptionNo, Long remainAmount, Long availableAmount) {
 		
-		this.no=no;
 		this.productNo=productNo;
-		this.firstOption=firstOption;
-		this.secondOption=secondOption;
+		this.firstOptionNo=firstOptionNo;
+		this.secondOptionNo=secondOptionNo;
 		this.remainAmount=remainAmount;
 		this.availableAmount=availableAmount;
 	}
@@ -46,17 +44,17 @@ public class ProductOptionVO {
 	public void setProductNo(Long productNo) {
 		this.productNo = productNo;
 	}
-	public Long getFirstOption() {
-		return firstOption;
+	public Long getFirstOptionNo() {
+		return firstOptionNo;
 	}
-	public void setFirstOption(Long firstOption) {
-		this.firstOption = firstOption;
+	public void setFirstOptionNo(Long firstOptionNo) {
+		this.firstOptionNo = firstOptionNo;
 	}
-	public Long getSecondOption() {
-		return secondOption;
+	public Long getSecondOptionNo() {
+		return secondOptionNo;
 	}
-	public void setSecondOption(Long secondOption) {
-		this.secondOption = secondOption;
+	public void setSecondOptionNo(Long secondOptionNo) {
+		this.secondOptionNo = secondOptionNo;
 	}
 	public Long getRemainAmount() {
 		return remainAmount;
@@ -73,8 +71,8 @@ public class ProductOptionVO {
 
 	@Override
 	public String toString() {
-		return "ProductOptionVO [no=" + no + ", productNo=" + productNo + ", firstOption=" + firstOption
-				+ ", secondOption=" + secondOption + ", remainAmount=" + remainAmount + ", availableAmount="
+		return "ProductOptionVO [no=" + no + ", productNo=" + productNo + ", firstOptionNo=" + firstOptionNo
+				+ ", secondOptionNo=" + secondOptionNo + ", remainAmount=" + remainAmount + ", availableAmount="
 				+ availableAmount + "]";
 	}
 		

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="order">
+
+	<!-- 주문 추가 -->
+	<insert id="insert" parameterType="ordervo">
+	<![CDATA[
+		insert into orders
+		values(
+		null,
+		#{memberId},
+		aes_encrypt(#{customerName},#{keyValue}),
+		aes_encrypt(#{customerAddress},#{keyValue}),
+		aes_encrypt(#{customerPhone},#{keyValue}),
+		aes_encrypt(#{customerEmail},#{keyValue}),
+		aes_encrypt(#{receiverName},#{keyValue}),
+		aes_encrypt(#{receiverAddress},#{keyValue}),
+		aes_encrypt(#{receiverPhone},#{keyValue}),
+		#{receiverMsg},
+		now(),
+		#{paymentCategory},
+		#{paymentPrice},
+		default)
+	]]>
+	</insert>
+
+	<!-- 주문 상세 추가 -->
+	<insert id="insertOrderDetail" parameterType="cartvo">
+	<![CDATA[
+		insert into orders_detail
+		values(
+		null,
+		#{orderNo},
+		#{productOptionNo},
+		#{cartAmount},
+		#{cartPrice})
+	]]>
+	</insert>
+	
+	<!-- 주문 번호 -->
+	<select id="selectMaxOrderNo" resultType="long">
+	<![CDATA[
+		select max(no) from orders
+	]]>
+	</select>
+	
+	
+</mapper>

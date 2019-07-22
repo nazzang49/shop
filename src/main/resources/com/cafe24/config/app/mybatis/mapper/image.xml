@@ -6,7 +6,7 @@
 	<!-- 이미지 추가 -->
 	<insert id="insert" parameterType="imagevo">
 	<![CDATA[
-		insert into product_image
+		insert into image
 		values(
 		null,
 		#{productNo},
@@ -17,7 +17,7 @@
 	</insert>
 	
 	<!-- 이미지 삭제 -->
-	<delete id="delete" parameterType="imagevo">
+	<delete id="delete" parameterType="long">
 	<![CDATA[
 		delete
 		from image
@@ -25,11 +25,21 @@
 	]]>
 	</delete>
 	
+	<!-- 이미지 목록 -->
+	<select id="selectAllImageByProductNo" parameterType="long" resultType="imagevo">
+	<![CDATA[
+		select *
+		from image
+		where productNo=#{productNo}
+		order by no desc
+	]]>
+	</select>
+	
 	<!-- 썸네일 -->
 	<select id="selectAllThumbnail" resultType="imagevo">
 	<![CDATA[
 		select i.url
-		from product_image i, product p
+		from image i, product p
 		where i.productNo=p.no
 		and i.repOrBasic="R"
 		order by p.no desc
@@ -40,7 +50,7 @@
 	<select id="selectAllThumbnailByCategoryNo" parameterType="productvo" resultType="imagevo">
 	<![CDATA[
 		select i.url
-		from product_image i, product p, category c
+		from image i, product p, category c
 		where p.categoryNo=#{categoryNo}
 		and p.categoryNo=c.no
 		and p.no=i.productNo
